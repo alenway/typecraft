@@ -1,0 +1,1605 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TypeCraft — Master the Written Word</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500&family=Space+Mono:wght@400;700&family=Sora:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0f0f0f;
+        --surface: #1a1a1a;
+        --surface2: #222222;
+        --surface3: #2a2a2a;
+        --accent: #e2b714;
+        --accent-dim: #b38f0f;
+        --text: #d1d0c5;
+        --text-dim: #646669;
+        --text-muted: #3c3c3c;
+        --correct: #d1d0c5;
+        --wrong: #ca4754;
+        --wrong-bg: #3d1c1f;
+        --cursor-color: #e2b714;
+        --mono: "Roboto Mono", monospace;
+        --ui: "Sora", sans-serif;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--ui);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* Noise texture overlay */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.5;
+      }
+
+      /* HEADER */
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: var(--bg);
+        border-bottom: 1px solid #1e1e1e;
+        padding: 0 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 56px;
+      }
+      .logo {
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--accent);
+        letter-spacing: -0.02em;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+      .logo-icon {
+        font-size: 1.2rem;
+      }
+      .nav-links {
+        display: flex;
+        gap: 0.25rem;
+      }
+      .nav-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-dim);
+        font-family: var(--ui);
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 0.4rem 0.75rem;
+        border-radius: 6px;
+        transition: all 0.15s;
+      }
+      .nav-btn:hover {
+        color: var(--text);
+        background: var(--surface2);
+      }
+      .nav-btn.active {
+        color: var(--accent);
+      }
+
+      /* MAIN LAYOUT */
+      main {
+        position: relative;
+        z-index: 1;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+        min-height: calc(100vh - 56px);
+      }
+
+      /* PANELS */
+      .panel {
+        display: none;
+      }
+      .panel.active {
+        display: block;
+        animation: fadeIn 0.2s ease;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ===== TYPING PANEL ===== */
+      .typing-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      .toolbar-left {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+      .pill-btn {
+        background: var(--surface);
+        border: 1px solid #2a2a2a;
+        color: var(--text-dim);
+        border-radius: 20px;
+        padding: 0.3rem 0.85rem;
+        font-size: 0.78rem;
+        font-family: var(--ui);
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        cursor: pointer;
+        transition: all 0.15s;
+        text-transform: uppercase;
+      }
+      .pill-btn:hover {
+        color: var(--text);
+        border-color: #3a3a3a;
+      }
+      .pill-btn.active {
+        background: var(--surface2);
+        color: var(--accent);
+        border-color: var(--accent-dim);
+      }
+
+      /* STATS BAR */
+      .stats-bar {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 1.5rem;
+        font-family: var(--mono);
+      }
+      .stat {
+        display: flex;
+        flex-direction: column;
+      }
+      .stat-label {
+        font-size: 0.65rem;
+        color: var(--text-dim);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .stat-value {
+        font-size: 1.6rem;
+        font-weight: 300;
+        color: var(--accent);
+        line-height: 1;
+      }
+      .stat-value.idle {
+        color: var(--text-dim);
+      }
+
+      /* TYPING AREA */
+      .typing-container {
+        position: relative;
+        background: transparent;
+        border-radius: 12px;
+        padding: 0;
+        margin-bottom: 1.5rem;
+        cursor: text;
+      }
+      .typing-words {
+        font-family: var(--mono);
+        font-size: 1.35rem;
+        line-height: 2.2rem;
+        color: var(--text-muted);
+        letter-spacing: 0.02em;
+        max-height: 6.6rem;
+        overflow: hidden;
+        position: relative;
+        word-break: break-word;
+        user-select: none;
+      }
+      .typing-words .char {
+        position: relative;
+        transition: color 0.06s;
+      }
+      .typing-words .char.correct {
+        color: var(--correct);
+      }
+      .typing-words .char.wrong {
+        color: var(--wrong);
+        background: var(--wrong-bg);
+        border-radius: 2px;
+      }
+      .typing-words .char.extra {
+        color: var(--wrong);
+        text-decoration: underline;
+        text-decoration-color: var(--wrong);
+      }
+      .typing-words .char.cursor::before {
+        content: "";
+        position: absolute;
+        left: -1px;
+        top: 2px;
+        width: 2px;
+        height: 1.6rem;
+        background: var(--cursor-color);
+        border-radius: 1px;
+        animation: blink 1s ease-in-out infinite;
+      }
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+      }
+      .typing-words .char.cursor.typed::before {
+        left: auto;
+        right: -1px;
+      }
+
+      .hidden-input {
+        position: absolute;
+        opacity: 0;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        cursor: text;
+        z-index: 10;
+        font-size: 1rem;
+        background: transparent;
+        border: none;
+        outline: none;
+      }
+
+      .focus-hint {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(15, 15, 15, 0.85);
+        border-radius: 12px;
+        color: var(--text-dim);
+        font-size: 0.85rem;
+        font-family: var(--mono);
+        letter-spacing: 0.1em;
+        backdrop-filter: blur(2px);
+        pointer-events: none;
+        transition: opacity 0.2s;
+      }
+      .typing-container.focused .focus-hint {
+        opacity: 0;
+      }
+
+      /* CONTROLS */
+      .typing-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+      .icon-btn {
+        background: var(--surface);
+        border: 1px solid #2a2a2a;
+        color: var(--text-dim);
+        border-radius: 8px;
+        padding: 0.5rem 0.8rem;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.15s;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-family: var(--ui);
+        font-size: 0.8rem;
+      }
+      .icon-btn:hover {
+        color: var(--accent);
+        border-color: var(--accent-dim);
+      }
+
+      /* RESULTS */
+      .results-panel {
+        display: none;
+        background: var(--surface);
+        border-radius: 16px;
+        padding: 2.5rem;
+        text-align: center;
+        border: 1px solid #222;
+        animation: fadeIn 0.3s ease;
+      }
+      .results-panel.show {
+        display: block;
+      }
+      .result-wpm {
+        font-family: var(--mono);
+        font-size: 5rem;
+        font-weight: 300;
+        color: var(--accent);
+        line-height: 1;
+      }
+      .result-label {
+        color: var(--text-dim);
+        font-size: 0.75rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+      }
+      .result-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        margin: 2rem 0;
+      }
+      .result-stat {
+        display: flex;
+        flex-direction: column;
+      }
+      .result-stat .val {
+        font-family: var(--mono);
+        font-size: 1.8rem;
+        font-weight: 300;
+        color: var(--text);
+      }
+      .result-stat .lbl {
+        font-size: 0.7rem;
+        color: var(--text-dim);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-top: 0.2rem;
+      }
+      .retry-btn {
+        background: var(--accent);
+        color: #000;
+        border: none;
+        border-radius: 8px;
+        padding: 0.7rem 2rem;
+        font-family: var(--ui);
+        font-size: 0.85rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.15s;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .retry-btn:hover {
+        background: #f0c720;
+        transform: translateY(-1px);
+      }
+
+      /* ===== TEXT INPUT PANEL ===== */
+      .input-panel-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      .section-title {
+        font-size: 0.7rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        margin-bottom: 0.75rem;
+      }
+      .sample-books {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 0.75rem;
+      }
+      .book-card {
+        background: var(--surface);
+        border: 1px solid #252525;
+        border-radius: 10px;
+        padding: 0.85rem 1rem;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .book-card:hover {
+        border-color: var(--accent-dim);
+        transform: translateY(-1px);
+      }
+      .book-card.selected {
+        border-color: var(--accent);
+        background: var(--surface2);
+      }
+      .book-title {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 0.25rem;
+      }
+      .book-author {
+        font-size: 0.72rem;
+        color: var(--text-dim);
+      }
+
+      .text-input-area {
+        background: var(--surface);
+        border: 1px solid #252525;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .text-input-header {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #252525;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .text-input-header span {
+        font-size: 0.72rem;
+        color: var(--text-dim);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .char-count {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        color: var(--text-dim);
+      }
+      textarea#custom-text {
+        width: 100%;
+        min-height: 200px;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: var(--text);
+        font-family: var(--mono);
+        font-size: 0.9rem;
+        line-height: 1.7;
+        padding: 1rem;
+        resize: vertical;
+      }
+
+      /* PDF Upload */
+      .pdf-drop {
+        border: 2px dashed #2a2a2a;
+        border-radius: 12px;
+        padding: 3rem 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+      }
+      .pdf-drop:hover,
+      .pdf-drop.drag-over {
+        border-color: var(--accent-dim);
+        background: rgba(226, 183, 20, 0.03);
+      }
+      .pdf-drop input[type="file"] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+      }
+      .pdf-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.75rem;
+      }
+      .pdf-drop-text {
+        font-size: 0.9rem;
+        color: var(--text-dim);
+      }
+      .pdf-drop-text strong {
+        color: var(--accent);
+      }
+      .pdf-pages {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+      }
+      .pdf-page-btn {
+        background: var(--surface);
+        border: 1px solid #2a2a2a;
+        color: var(--text-dim);
+        border-radius: 6px;
+        padding: 0.25rem 0.6rem;
+        font-size: 0.75rem;
+        font-family: var(--mono);
+        cursor: pointer;
+        transition: all 0.12s;
+      }
+      .pdf-page-btn:hover {
+        color: var(--accent);
+        border-color: var(--accent-dim);
+      }
+      .pdf-page-btn.selected {
+        background: var(--surface2);
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+
+      .pdf-info {
+        background: var(--surface);
+        border: 1px solid #252525;
+        border-radius: 10px;
+        padding: 0.85rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 0.75rem;
+      }
+      .pdf-filename {
+        font-family: var(--mono);
+        font-size: 0.82rem;
+        color: var(--text);
+      }
+      .pdf-meta {
+        font-size: 0.72rem;
+        color: var(--text-dim);
+        margin-top: 0.1rem;
+      }
+
+      .use-text-btn {
+        background: var(--accent);
+        color: #000;
+        border: none;
+        border-radius: 8px;
+        padding: 0.7rem 1.5rem;
+        font-family: var(--ui);
+        font-size: 0.82rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.15s;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .use-text-btn:hover {
+        background: #f0c720;
+      }
+      .use-text-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      /* ===== READ PANEL ===== */
+      .read-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+      }
+      .read-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      .read-label {
+        font-size: 0.72rem;
+        color: var(--text-dim);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      input[type="range"].speed-slider {
+        -webkit-appearance: none;
+        background: var(--surface3);
+        border-radius: 4px;
+        height: 4px;
+        width: 120px;
+        outline: none;
+      }
+      input[type="range"].speed-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 14px;
+        height: 14px;
+        background: var(--accent);
+        border-radius: 50%;
+        cursor: pointer;
+      }
+      .speed-val {
+        font-family: var(--mono);
+        font-size: 0.82rem;
+        color: var(--accent);
+        min-width: 40px;
+      }
+
+      .read-content {
+        background: var(--surface);
+        border: 1px solid #222;
+        border-radius: 12px;
+        padding: 2.5rem 3rem;
+        max-height: 60vh;
+        overflow-y: auto;
+        position: relative;
+      }
+      .read-content::-webkit-scrollbar {
+        width: 4px;
+      }
+      .read-content::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .read-content::-webkit-scrollbar-thumb {
+        background: #2a2a2a;
+        border-radius: 2px;
+      }
+
+      .read-text {
+        font-family: var(--mono);
+        font-size: 1rem;
+        line-height: 1.9;
+        color: var(--text-dim);
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      .read-text .highlight-word {
+        color: var(--accent);
+        background: rgba(226, 183, 20, 0.12);
+        border-radius: 3px;
+        padding: 0 1px;
+      }
+      .read-text .read-word {
+        transition: color 0.15s;
+      }
+      .read-text .passed {
+        color: var(--text);
+      }
+
+      .read-progress {
+        margin-top: 1rem;
+        background: var(--surface2);
+        border-radius: 4px;
+        height: 3px;
+        overflow: hidden;
+      }
+      .read-progress-bar {
+        height: 100%;
+        background: var(--accent);
+        transition: width 0.3s ease;
+        border-radius: 4px;
+        width: 0%;
+      }
+
+      /* TOAST */
+      .toast {
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--surface2);
+        border: 1px solid var(--accent-dim);
+        color: var(--accent);
+        border-radius: 8px;
+        padding: 0.6rem 1.5rem;
+        font-size: 0.82rem;
+        font-family: var(--mono);
+        letter-spacing: 0.06em;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.2s;
+        pointer-events: none;
+      }
+      .toast.show {
+        opacity: 1;
+      }
+
+      /* RESPONSIVE */
+      @media (max-width: 640px) {
+        main {
+          padding: 1rem;
+        }
+        .typing-words {
+          font-size: 1.1rem;
+          line-height: 2rem;
+          max-height: 6rem;
+        }
+        .result-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .read-content {
+          padding: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <span class="logo-icon">⌨</span>
+        TypeCraft
+      </div>
+      <nav class="nav-links">
+        <button class="nav-btn active" onclick="switchPanel('type')">
+          Type
+        </button>
+        <button class="nav-btn" onclick="switchPanel('read')">Read</button>
+        <button class="nav-btn" onclick="switchPanel('text')">+ Text</button>
+      </nav>
+    </header>
+
+    <main>
+      <!-- ===== TYPING PANEL ===== -->
+      <div id="panel-type" class="panel active">
+        <div class="typing-toolbar">
+          <div class="toolbar-left">
+            <span
+              class="section-title"
+              style="margin-bottom: 0; display: flex; align-items: center"
+              >Mode:</span
+            >
+            <button class="pill-btn active" onclick="setMode('words', this)">
+              Words
+            </button>
+            <button class="pill-btn" onclick="setMode('quote', this)">
+              Quote
+            </button>
+            <button class="pill-btn" onclick="setMode('custom', this)">
+              Custom
+            </button>
+          </div>
+          <div class="toolbar-left">
+            <span
+              class="section-title"
+              style="margin-bottom: 0; display: flex; align-items: center"
+              >Time:</span
+            >
+            <button class="pill-btn" onclick="setTimer(15, this)">15s</button>
+            <button class="pill-btn active" onclick="setTimer(30, this)">
+              30s
+            </button>
+            <button class="pill-btn" onclick="setTimer(60, this)">60s</button>
+            <button class="pill-btn" onclick="setTimer(0, this)">∞</button>
+          </div>
+        </div>
+
+        <div class="stats-bar">
+          <div class="stat">
+            <span class="stat-label">WPM</span>
+            <span class="stat-value idle" id="stat-wpm">—</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Accuracy</span>
+            <span class="stat-value idle" id="stat-acc">—</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Time</span>
+            <span class="stat-value idle" id="stat-time">—</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Chars</span>
+            <span class="stat-value idle" id="stat-chars">—</span>
+          </div>
+        </div>
+
+        <div
+          class="typing-container"
+          id="typing-container"
+          onclick="focusInput()"
+        >
+          <div class="typing-words" id="typing-words"></div>
+          <input
+            class="hidden-input"
+            id="hidden-input"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+          />
+          <div class="focus-hint" id="focus-hint">click to focus</div>
+        </div>
+
+        <div class="typing-controls">
+          <button class="icon-btn" onclick="resetTyping()">↺ Restart</button>
+          <button class="icon-btn" onclick="newText()">⟳ New Text</button>
+        </div>
+
+        <div class="results-panel" id="results-panel">
+          <div class="result-label">WPM</div>
+          <div class="result-wpm" id="res-wpm">0</div>
+          <div class="result-grid">
+            <div class="result-stat">
+              <span class="val" id="res-acc">0%</span
+              ><span class="lbl">Accuracy</span>
+            </div>
+            <div class="result-stat">
+              <span class="val" id="res-chars">0</span
+              ><span class="lbl">Chars</span>
+            </div>
+            <div class="result-stat">
+              <span class="val" id="res-time">0s</span
+              ><span class="lbl">Time</span>
+            </div>
+            <div class="result-stat">
+              <span class="val" id="res-errors">0</span
+              ><span class="lbl">Errors</span>
+            </div>
+          </div>
+          <button class="retry-btn" onclick="resetTyping()">↺ Try Again</button>
+        </div>
+      </div>
+
+      <!-- ===== READ PANEL ===== -->
+      <div id="panel-read" class="panel">
+        <div class="read-toolbar">
+          <div class="read-controls">
+            <span class="read-label">Speed</span>
+            <input
+              type="range"
+              class="speed-slider"
+              id="speed-slider"
+              min="50"
+              max="500"
+              value="200"
+              oninput="updateSpeed()"
+            />
+            <span class="speed-val" id="speed-val">200 WPM</span>
+          </div>
+          <button class="pill-btn" id="read-play-btn" onclick="toggleRead()">
+            ▶ Play
+          </button>
+          <button class="pill-btn" onclick="stopRead()">■ Stop</button>
+          <button class="pill-btn" onclick="switchPanel('text')">
+            + Load Text
+          </button>
+        </div>
+        <div class="read-content" id="read-content">
+          <div class="read-text" id="read-text">
+            Load some text first from the "+ Text" tab, or use the sample text
+            below.
+          </div>
+        </div>
+        <div class="read-progress">
+          <div class="read-progress-bar" id="read-progress-bar"></div>
+        </div>
+      </div>
+
+      <!-- ===== TEXT INPUT PANEL ===== -->
+      <div id="panel-text" class="panel">
+        <div class="input-panel-wrap">
+          <div>
+            <div class="section-title">Sample Books</div>
+            <div class="sample-books" id="sample-books"></div>
+          </div>
+
+          <div>
+            <div class="section-title">Custom Text</div>
+            <div class="text-input-area">
+              <div class="text-input-header">
+                <span>Paste your text here</span>
+                <span class="char-count" id="char-count">0 chars</span>
+              </div>
+              <textarea
+                id="custom-text"
+                placeholder="Paste a paragraph from any book, article, or write your own text..."
+                oninput="updateCharCount()"
+              ></textarea>
+            </div>
+          </div>
+
+          <div>
+            <div class="section-title">Upload PDF</div>
+            <div class="pdf-drop" id="pdf-drop">
+              <input
+                type="file"
+                id="pdf-input"
+                accept=".pdf"
+                onchange="handlePdfUpload(event)"
+              />
+              <div class="pdf-icon">📄</div>
+              <div class="pdf-drop-text">
+                Drop a PDF or <strong>click to browse</strong>
+              </div>
+              <div
+                style="
+                  font-size: 0.75rem;
+                  color: var(--text-muted);
+                  margin-top: 0.4rem;
+                "
+              >
+                Extracts text for typing or reading
+              </div>
+            </div>
+            <div id="pdf-info" style="display: none">
+              <div class="pdf-info">
+                <div>
+                  <div class="pdf-filename" id="pdf-filename">document.pdf</div>
+                  <div class="pdf-meta" id="pdf-meta">Loading...</div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center">
+                  <span class="read-label">Pages:</span>
+                  <div class="pdf-pages" id="pdf-pages"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; align-items: center">
+            <button class="use-text-btn" onclick="applyText('type')">
+              Use for Typing ↗
+            </button>
+            <button
+              class="use-text-btn"
+              onclick="applyText('read')"
+              style="
+                background: var(--surface2);
+                color: var(--accent);
+                border: 1px solid var(--accent-dim);
+              "
+            >
+              Use for Reading ↗
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      // PDF.js setup
+      if (window.pdfjsLib) {
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+          "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+      }
+
+      // ===== SAMPLE TEXTS =====
+      const SAMPLES = {
+        words: [
+          "the quick brown fox jumps over the lazy dog",
+          "pack my box with five dozen liquor jugs",
+          "how vexingly quick daft zebras jump",
+          "sphinx of black quartz judge my vow",
+          "the five boxing wizards jump quickly",
+          "jackdaws love my big sphinx of quartz",
+          "the job requires extra pluck and zeal from every young wage earner",
+          "a mad boxer shot a quick gloved jab to the jaw of his dizzy opponent",
+        ],
+        quote: [
+          "It is a truth universally acknowledged that a single man in possession of a good fortune must be in want of a wife.",
+          "Call me Ishmael. Some years ago never mind how long precisely having little or no money in my purse and nothing particular to interest me on shore I thought I would sail about a little and see the watery part of the world.",
+          "It was the best of times it was the worst of times it was the age of wisdom it was the age of foolishness it was the epoch of belief it was the epoch of incredulity.",
+          "In my younger and more vulnerable years my father gave me some advice that I have been turning over in my mind ever since. Whenever you feel like criticizing anyone he told me just remember that all the people in this world haven't had the advantages that you've had.",
+          "It was a bright cold day in April and the clocks were striking thirteen. Winston Smith his chin nuzzled into his breast in an effort to escape the vile wind slipped quickly through the glass doors of Victory Mansions.",
+          "Stately plump Buck Mulligan came from the stairhead bearing a bowl of lather on which a mirror and a razor lay crossed. A yellow dressinggown ungirdled was sustained gently behind him on the mild morning air.",
+          "Happy families are all alike every unhappy family is unhappy in its own way. Everything was in confusion in the Oblonskys' house. The wife had discovered that the husband was carrying on an intrigue with a French girl who had been a governess in their family.",
+          "Many years later as he faced the firing squad Colonel Aureliano Buendía was to remember that distant afternoon when his father took him to discover ice.",
+        ],
+      };
+
+      const BOOKS = [
+        {
+          title: "Pride & Prejudice",
+          author: "Jane Austen",
+          key: "quote",
+          idx: 0,
+        },
+        { title: "Moby Dick", author: "Herman Melville", key: "quote", idx: 1 },
+        {
+          title: "A Tale of Two Cities",
+          author: "Charles Dickens",
+          key: "quote",
+          idx: 2,
+        },
+        {
+          title: "The Great Gatsby",
+          author: "F. Scott Fitzgerald",
+          key: "quote",
+          idx: 3,
+        },
+        { title: "1984", author: "George Orwell", key: "quote", idx: 4 },
+        { title: "Ulysses", author: "James Joyce", key: "quote", idx: 5 },
+        { title: "Anna Karenina", author: "Leo Tolstoy", key: "quote", idx: 6 },
+        {
+          title: "One Hundred Years of Solitude",
+          author: "Gabriel García Márquez",
+          key: "quote",
+          idx: 7,
+        },
+      ];
+
+      // ===== STATE =====
+      let state = {
+        mode: "words",
+        timerDuration: 30,
+        text: "",
+        typed: "",
+        started: false,
+        finished: false,
+        startTime: null,
+        timerInterval: null,
+        elapsed: 0,
+        totalKeystrokes: 0,
+        errorCount: 0,
+        customText: "",
+      };
+
+      let readState = {
+        words: [],
+        index: 0,
+        interval: null,
+        playing: false,
+        speed: 200,
+      };
+
+      // ===== PANEL SWITCHING =====
+      function switchPanel(name) {
+        document
+          .querySelectorAll(".panel")
+          .forEach((p) => p.classList.remove("active"));
+        document.getElementById("panel-" + name).classList.add("active");
+        document.querySelectorAll(".nav-btn").forEach((b, i) => {
+          b.classList.toggle("active", ["type", "read", "text"][i] === name);
+        });
+      }
+
+      // ===== SETUP =====
+      function buildBookCards() {
+        const container = document.getElementById("sample-books");
+        BOOKS.forEach((book, i) => {
+          const card = document.createElement("div");
+          card.className = "book-card";
+          card.innerHTML = `<div class="book-title">${book.title}</div><div class="book-author">${book.author}</div>`;
+          card.onclick = () => {
+            document
+              .querySelectorAll(".book-card")
+              .forEach((c) => c.classList.remove("selected"));
+            card.classList.add("selected");
+            const text = SAMPLES.quote[book.idx];
+            document.getElementById("custom-text").value = text;
+            updateCharCount();
+          };
+          container.appendChild(card);
+        });
+      }
+
+      function getRandomText() {
+        const pool =
+          state.mode === "custom" && state.customText
+            ? [state.customText]
+            : SAMPLES[state.mode] || SAMPLES.quote;
+        return pool[Math.floor(Math.random() * pool.length)];
+      }
+
+      function initTyping() {
+        state.text = getRandomText();
+        state.typed = "";
+        state.started = false;
+        state.finished = false;
+        state.startTime = null;
+        state.elapsed = 0;
+        state.totalKeystrokes = 0;
+        state.errorCount = 0;
+        clearInterval(state.timerInterval);
+
+        document.getElementById("results-panel").classList.remove("show");
+        document.getElementById("typing-words").style.display = "block";
+
+        updateStats(false);
+        renderWords();
+      }
+
+      function renderWords() {
+        const container = document.getElementById("typing-words");
+        const text = state.text;
+        const typed = state.typed;
+
+        let html = "";
+        for (let i = 0; i < text.length; i++) {
+          let cls = "";
+          if (i < typed.length) {
+            cls = typed[i] === text[i] ? "correct" : "wrong";
+          } else if (i === typed.length) {
+            cls = "cursor";
+          }
+          const ch = text[i] === " " ? "&nbsp;" : escapeHtml(text[i]);
+          html += `<span class="char ${cls}">${ch}</span>`;
+        }
+
+        // Extra typed chars beyond text
+        if (typed.length > text.length) {
+          for (let i = text.length; i < typed.length; i++) {
+            html += `<span class="char extra">${escapeHtml(typed[i])}</span>`;
+          }
+        }
+
+        container.innerHTML = html;
+        scrollToCursor();
+      }
+
+      function scrollToCursor() {
+        const container = document.getElementById("typing-words");
+        const cursor = container.querySelector(".cursor");
+        if (!cursor) return;
+        const containerTop = container.getBoundingClientRect().top;
+        const cursorTop = cursor.getBoundingClientRect().top;
+        const lineH = 35;
+        if (cursorTop - containerTop > lineH * 2) {
+          container.scrollTop += cursorTop - containerTop - lineH;
+        }
+      }
+
+      function escapeHtml(c) {
+        if (c === "<") return "&lt;";
+        if (c === ">") return "&gt;";
+        if (c === "&") return "&amp;";
+        return c;
+      }
+
+      // ===== INPUT HANDLING =====
+      function focusInput() {
+        const input = document.getElementById("hidden-input");
+        input.focus();
+        document.getElementById("typing-container").classList.add("focused");
+      }
+
+      document.getElementById("hidden-input").addEventListener("focus", () => {
+        document.getElementById("typing-container").classList.add("focused");
+        document.getElementById("focus-hint").style.opacity = "0";
+      });
+
+      document.getElementById("hidden-input").addEventListener("blur", () => {
+        document.getElementById("typing-container").classList.remove("focused");
+        if (!state.started)
+          document.getElementById("focus-hint").style.opacity = "1";
+      });
+
+      document
+        .getElementById("hidden-input")
+        .addEventListener("keydown", (e) => {
+          if (state.finished) return;
+          if (e.key === "Tab") {
+            e.preventDefault();
+            resetTyping();
+            return;
+          }
+          if (e.key === "Escape") {
+            resetTyping();
+            return;
+          }
+        });
+
+      document.getElementById("hidden-input").addEventListener("input", (e) => {
+        if (state.finished) return;
+
+        if (!state.started) {
+          state.started = true;
+          state.startTime = Date.now();
+          startTimer();
+        }
+
+        const val = e.target.value;
+        state.totalKeystrokes++;
+
+        if (val.length > 0 && val.length > state.typed.length) {
+          const newChar = val[val.length - 1];
+          const expectedChar = state.text[val.length - 1];
+          if (newChar !== expectedChar) state.errorCount++;
+        }
+
+        state.typed = val;
+        renderWords();
+        updateStats(true);
+
+        // Check completion
+        if (
+          state.typed.length >= state.text.length &&
+          state.timerDuration === 0
+        ) {
+          // Finished the text
+          endTest();
+        }
+      });
+
+      function startTimer() {
+        if (state.timerDuration === 0) {
+          state.timerInterval = setInterval(() => {
+            state.elapsed = (Date.now() - state.startTime) / 1000;
+            updateStats(true);
+          }, 200);
+          return;
+        }
+
+        let remaining = state.timerDuration;
+        document.getElementById("stat-time").textContent = remaining + "s";
+        document.getElementById("stat-time").classList.remove("idle");
+
+        state.timerInterval = setInterval(() => {
+          state.elapsed = (Date.now() - state.startTime) / 1000;
+          remaining = Math.max(
+            0,
+            state.timerDuration - Math.floor(state.elapsed),
+          );
+          document.getElementById("stat-time").textContent = remaining + "s";
+          updateStats(true);
+          if (remaining <= 0) {
+            endTest();
+          }
+        }, 200);
+      }
+
+      function updateStats(live) {
+        const wpmEl = document.getElementById("stat-wpm");
+        const accEl = document.getElementById("stat-acc");
+        const charsEl = document.getElementById("stat-chars");
+        const timeEl = document.getElementById("stat-time");
+
+        if (!live) {
+          wpmEl.textContent = "—";
+          wpmEl.classList.add("idle");
+          accEl.textContent = "—";
+          accEl.classList.add("idle");
+          charsEl.textContent = "—";
+          charsEl.classList.add("idle");
+          timeEl.textContent =
+            state.timerDuration > 0 ? state.timerDuration + "s" : "—";
+          timeEl.classList.add("idle");
+          return;
+        }
+
+        const elapsedMin = state.elapsed / 60 || 0.0001;
+        const correctChars = countCorrectChars();
+        const wpm = Math.round(correctChars / 5 / elapsedMin);
+        const acc =
+          state.totalKeystrokes > 0
+            ? Math.round(
+                ((state.totalKeystrokes - state.errorCount) /
+                  state.totalKeystrokes) *
+                  100,
+              )
+            : 100;
+
+        wpmEl.textContent = isFinite(wpm) ? wpm : 0;
+        wpmEl.classList.remove("idle");
+        accEl.textContent = acc + "%";
+        accEl.classList.remove("idle");
+        charsEl.textContent = state.typed.length;
+        charsEl.classList.remove("idle");
+      }
+
+      function countCorrectChars() {
+        let n = 0;
+        for (
+          let i = 0;
+          i < Math.min(state.typed.length, state.text.length);
+          i++
+        ) {
+          if (state.typed[i] === state.text[i]) n++;
+        }
+        return n;
+      }
+
+      function endTest() {
+        if (state.finished) return;
+        state.finished = true;
+        clearInterval(state.timerInterval);
+        state.elapsed = (Date.now() - state.startTime) / 1000;
+
+        const elapsedMin = state.elapsed / 60;
+        const correctChars = countCorrectChars();
+        const wpm = Math.round(correctChars / 5 / elapsedMin);
+        const acc =
+          state.totalKeystrokes > 0
+            ? Math.round(
+                ((state.totalKeystrokes - state.errorCount) /
+                  state.totalKeystrokes) *
+                  100,
+              )
+            : 100;
+
+        document.getElementById("res-wpm").textContent = isFinite(wpm)
+          ? wpm
+          : 0;
+        document.getElementById("res-acc").textContent = acc + "%";
+        document.getElementById("res-chars").textContent = correctChars;
+        document.getElementById("res-time").textContent =
+          Math.round(state.elapsed) + "s";
+        document.getElementById("res-errors").textContent = state.errorCount;
+
+        document.getElementById("typing-words").style.display = "none";
+        document.getElementById("results-panel").classList.add("show");
+      }
+
+      function resetTyping() {
+        clearInterval(state.timerInterval);
+        document.getElementById("hidden-input").value = "";
+        initTyping();
+        setTimeout(focusInput, 50);
+      }
+
+      function newText() {
+        state.typed = "";
+        clearInterval(state.timerInterval);
+        document.getElementById("hidden-input").value = "";
+        state.text = getRandomText();
+        state.started = false;
+        state.finished = false;
+        state.startTime = null;
+        state.elapsed = 0;
+        state.totalKeystrokes = 0;
+        state.errorCount = 0;
+        document.getElementById("results-panel").classList.remove("show");
+        document.getElementById("typing-words").style.display = "block";
+        updateStats(false);
+        renderWords();
+        setTimeout(focusInput, 50);
+      }
+
+      // ===== MODE & TIMER =====
+      function setMode(mode, btn) {
+        state.mode = mode;
+        document
+          .querySelectorAll(
+            ".typing-toolbar .toolbar-left:first-child .pill-btn",
+          )
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        if (mode === "custom" && !state.customText) {
+          showToast('Add custom text in the "+ Text" tab first');
+        }
+        newText();
+      }
+
+      function setTimer(t, btn) {
+        state.timerDuration = t;
+        document
+          .querySelectorAll(
+            ".typing-toolbar .toolbar-left:last-child .pill-btn",
+          )
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        resetTyping();
+      }
+
+      // ===== READ MODE =====
+      function updateSpeed() {
+        const val = document.getElementById("speed-slider").value;
+        readState.speed = parseInt(val);
+        document.getElementById("speed-val").textContent = val + " WPM";
+        if (readState.playing) {
+          clearInterval(readState.interval);
+          startReadInterval();
+        }
+      }
+
+      function initReadText(text) {
+        stopRead();
+        readState.words = text.split(/\s+/).filter((w) => w.length > 0);
+        readState.index = 0;
+        renderReadText();
+        document.getElementById("read-progress-bar").style.width = "0%";
+      }
+
+      function renderReadText() {
+        const container = document.getElementById("read-text");
+        container.innerHTML = readState.words
+          .map((w, i) => {
+            let cls = "read-word";
+            if (i < readState.index) cls += " passed";
+            if (i === readState.index) cls += " highlight-word";
+            return `<span class="${cls}" id="rw-${i}">${escapeHtml(w)} </span>`;
+          })
+          .join("");
+      }
+
+      function toggleRead() {
+        if (readState.playing) {
+          pauseRead();
+        } else {
+          playRead();
+        }
+      }
+
+      function playRead() {
+        if (readState.words.length === 0) {
+          showToast('Load text from the "+ Text" tab first');
+          return;
+        }
+        readState.playing = true;
+        document.getElementById("read-play-btn").textContent = "⏸ Pause";
+        startReadInterval();
+      }
+
+      function startReadInterval() {
+        const msPerWord = (60 / readState.speed) * 1000;
+        readState.interval = setInterval(() => {
+          if (readState.index >= readState.words.length) {
+            stopRead();
+            return;
+          }
+          highlightReadWord(readState.index);
+          readState.index++;
+          const pct = (readState.index / readState.words.length) * 100;
+          document.getElementById("read-progress-bar").style.width = pct + "%";
+        }, msPerWord);
+      }
+
+      function highlightReadWord(idx) {
+        const all = document.querySelectorAll(".read-word");
+        all.forEach((el, i) => {
+          el.className = "read-word";
+          if (i < idx) el.classList.add("passed");
+          if (i === idx) el.classList.add("highlight-word");
+        });
+        const el = document.getElementById("rw-" + idx);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+
+      function pauseRead() {
+        readState.playing = false;
+        clearInterval(readState.interval);
+        document.getElementById("read-play-btn").textContent = "▶ Play";
+      }
+
+      function stopRead() {
+        pauseRead();
+        readState.index = 0;
+        renderReadText();
+        document.getElementById("read-progress-bar").style.width = "0%";
+      }
+
+      // ===== TEXT INPUT =====
+      function updateCharCount() {
+        const val = document.getElementById("custom-text").value;
+        document.getElementById("char-count").textContent =
+          val.length + " chars";
+      }
+
+      function applyText(dest) {
+        const customVal = document.getElementById("custom-text").value.trim();
+        const text = customVal || state.text;
+
+        if (!customVal) {
+          showToast("Please enter or paste some text first");
+          return;
+        }
+
+        if (dest === "type") {
+          state.customText = text;
+          state.mode = "custom";
+          document.getElementById("hidden-input").value = "";
+          state.text = text;
+          state.typed = "";
+          state.started = false;
+          state.finished = false;
+          state.startTime = null;
+          state.elapsed = 0;
+          state.totalKeystrokes = 0;
+          state.errorCount = 0;
+          clearInterval(state.timerInterval);
+          document.getElementById("results-panel").classList.remove("show");
+          document.getElementById("typing-words").style.display = "block";
+          updateStats(false);
+          renderWords();
+          switchPanel("type");
+          setTimeout(focusInput, 100);
+          showToast("Text loaded! Start typing.");
+        } else {
+          initReadText(text);
+          switchPanel("read");
+          showToast("Text loaded for reading!");
+        }
+      }
+
+      // ===== PDF HANDLING =====
+      async function handlePdfUpload(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        document.getElementById("pdf-filename").textContent = file.name;
+        document.getElementById("pdf-meta").textContent = "Extracting text...";
+        document.getElementById("pdf-info").style.display = "block";
+
+        if (!window.pdfjsLib) {
+          showToast("PDF.js not loaded. Try refreshing.");
+          return;
+        }
+
+        try {
+          const arrayBuffer = await file.arrayBuffer();
+          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          const numPages = pdf.numPages;
+          document.getElementById("pdf-meta").textContent = `${numPages} pages`;
+
+          const pagesContainer = document.getElementById("pdf-pages");
+          pagesContainer.innerHTML = "";
+
+          // Extract all pages
+          const pageTexts = [];
+          for (let i = 1; i <= numPages; i++) {
+            const page = await pdf.getPage(i);
+            const content = await page.getTextContent();
+            const text = content.items
+              .map((item) => item.str)
+              .join(" ")
+              .replace(/\s+/g, " ")
+              .trim();
+            pageTexts.push(text);
+
+            const btn = document.createElement("button");
+            btn.className = "pdf-page-btn";
+            btn.textContent = i;
+            btn.onclick = () => {
+              document
+                .querySelectorAll(".pdf-page-btn")
+                .forEach((b) => b.classList.remove("selected"));
+              btn.classList.add("selected");
+              document.getElementById("custom-text").value = pageTexts[i - 1];
+              updateCharCount();
+            };
+            pagesContainer.appendChild(btn);
+          }
+
+          // Load all text by default
+          const allText = pageTexts.join("\n\n");
+          document.getElementById("custom-text").value = allText;
+          updateCharCount();
+          showToast(`PDF loaded! ${numPages} pages extracted.`);
+        } catch (err) {
+          document.getElementById("pdf-meta").textContent = "Error reading PDF";
+          showToast("Could not read PDF. Make sure it has selectable text.");
+          console.error(err);
+        }
+      }
+
+      // Drag & drop
+      const dropZone = document.getElementById("pdf-drop");
+      dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.classList.add("drag-over");
+      });
+      dropZone.addEventListener("dragleave", () =>
+        dropZone.classList.remove("drag-over"),
+      );
+      dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("drag-over");
+        const file = e.dataTransfer.files[0];
+        if (file && file.type === "application/pdf") {
+          handlePdfUpload({ target: { files: [file] } });
+        }
+      });
+
+      // ===== TOAST =====
+      function showToast(msg) {
+        const el = document.getElementById("toast");
+        el.textContent = msg;
+        el.classList.add("show");
+        setTimeout(() => el.classList.remove("show"), 2500);
+      }
+
+      // ===== INIT =====
+      buildBookCards();
+      initTyping();
+
+      // Keyboard shortcut: Tab to restart
+      document.addEventListener("keydown", (e) => {
+        if (
+          e.key === "Tab" &&
+          document.getElementById("panel-type").classList.contains("active")
+        ) {
+          e.preventDefault();
+          resetTyping();
+        }
+      });
+    </script>
+  </body>
+</html>
