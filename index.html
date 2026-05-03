@@ -3,34 +3,37 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TypeCraft — Master the Written Word</title>
+    <title>TypeCraft</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <link
-      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500&family=Space+Mono:wght@400;700&family=Sora:wght@300;400;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
-        --bg: #0f0f0f;
-        --surface: #1a1a1a;
-        --surface2: #222222;
-        --surface3: #2a2a2a;
-        --accent: #e2b714;
-        --accent-dim: #b38f0f;
-        --text: #d1d0c5;
-        --text-dim: #646669;
-        --text-muted: #3c3c3c;
-        --correct: #d1d0c5;
-        --wrong: #ca4754;
-        --wrong-bg: #3d1c1f;
-        --cursor-color: #e2b714;
+        --bg: #0e0f14;
+        --surface: #14151c;
+        --surface2: #1c1d27;
+        --border: #21222e;
+        --accent: #00b4d8;
+        --accent2: #0096c7;
+        --sub: #5c6075;
+        --sub2: #3a3d52;
+        --text: #cdd6f4;
+        --correct: #cdd6f4;
+        --wrong: #f38ba8;
+        --wrong-bg: rgba(243, 139, 168, 0.12);
+        --extra: #f38ba8;
+        --cursor: #00b4d8;
         --mono: "Roboto Mono", monospace;
-        --ui: "Sora", sans-serif;
+        --r: 8px;
       }
-      * {
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
       }
       html,
       body {
@@ -39,216 +42,203 @@
       body {
         background: var(--bg);
         color: var(--text);
-        font-family: var(--ui);
+        font-family: var(--mono);
         min-height: 100vh;
-        overflow-x: hidden;
-      }
-
-      /* Noise texture overlay */
-      body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-        pointer-events: none;
-        z-index: 0;
-        opacity: 0.5;
-      }
-
-      /* HEADER */
-      header {
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        background: var(--bg);
-        border-bottom: 1px solid #1e1e1e;
-        padding: 0 2rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        height: 56px;
-      }
-      .logo {
-        font-family: var(--mono);
-        font-weight: 700;
-        font-size: 1.1rem;
-        color: var(--accent);
-        letter-spacing: -0.02em;
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
-      }
-      .logo-icon {
-        font-size: 1.2rem;
-      }
-      .nav-links {
-        display: flex;
-        gap: 0.25rem;
-      }
-      .nav-btn {
-        background: none;
-        border: none;
-        cursor: pointer;
-        color: var(--text-dim);
-        font-family: var(--ui);
-        font-size: 0.8rem;
-        font-weight: 600;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        padding: 0.4rem 0.75rem;
-        border-radius: 6px;
-        transition: all 0.15s;
-      }
-      .nav-btn:hover {
-        color: var(--text);
-        background: var(--surface2);
-      }
-      .nav-btn.active {
-        color: var(--accent);
-      }
-
-      /* MAIN LAYOUT */
-      main {
-        position: relative;
-        z-index: 1;
-        max-width: 1000px;
-        margin: 0 auto;
-        padding: 2rem 1.5rem;
-        min-height: calc(100vh - 56px);
-      }
-
-      /* PANELS */
-      .panel {
-        display: none;
-      }
-      .panel.active {
-        display: block;
-        animation: fadeIn 0.2s ease;
-      }
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(8px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      /* ===== TYPING PANEL ===== */
-      .typing-toolbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 2rem;
-        flex-wrap: wrap;
-        gap: 1rem;
-      }
-      .toolbar-left {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-      }
-      .pill-btn {
-        background: var(--surface);
-        border: 1px solid #2a2a2a;
-        color: var(--text-dim);
-        border-radius: 20px;
-        padding: 0.3rem 0.85rem;
-        font-size: 0.78rem;
-        font-family: var(--ui);
-        font-weight: 600;
-        letter-spacing: 0.06em;
-        cursor: pointer;
-        transition: all 0.15s;
-        text-transform: uppercase;
-      }
-      .pill-btn:hover {
-        color: var(--text);
-        border-color: #3a3a3a;
-      }
-      .pill-btn.active {
-        background: var(--surface2);
-        color: var(--accent);
-        border-color: var(--accent-dim);
-      }
-
-      /* STATS BAR */
-      .stats-bar {
-        display: flex;
-        gap: 2rem;
-        margin-bottom: 1.5rem;
-        font-family: var(--mono);
-      }
-      .stat {
         display: flex;
         flex-direction: column;
       }
-      .stat-label {
-        font-size: 0.65rem;
-        color: var(--text-dim);
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
+
+      /* HEADER */
+      #hdr {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 2.5rem;
+        height: 60px;
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
       }
-      .stat-value {
-        font-size: 1.6rem;
-        font-weight: 300;
+      .logo {
         color: var(--accent);
-        line-height: 1;
+        font-size: 1.1rem;
+        font-weight: 500;
+        letter-spacing: 0.05em;
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
       }
-      .stat-value.idle {
-        color: var(--text-dim);
+      .logo svg {
+        width: 18px;
+        height: 18px;
+        fill: var(--accent);
+      }
+      .nav {
+        display: flex;
+        gap: 0.1rem;
+      }
+      .nv {
+        background: none;
+        border: none;
+        color: var(--sub);
+        font-family: var(--mono);
+        font-size: 0.8rem;
+        padding: 0.4rem 0.9rem;
+        border-radius: var(--r);
+        cursor: pointer;
+        transition:
+          color 0.15s,
+          background 0.15s;
+        letter-spacing: 0.05em;
+      }
+      .nv:hover {
+        color: var(--text);
+        background: var(--surface2);
+      }
+      .nv.on {
+        color: var(--accent);
       }
 
-      /* TYPING AREA */
-      .typing-container {
+      /* MAIN */
+      #app {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1.5rem 3rem;
+      }
+      .sc {
+        display: none;
+        width: 100%;
+        max-width: 860px;
+      }
+      .sc.vis {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      /* TOOLBAR */
+      .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+      }
+      .sep {
+        width: 1px;
+        height: 18px;
+        background: var(--border);
+        margin: 0 0.25rem;
+      }
+      .chip {
+        background: none;
+        border: none;
+        color: var(--sub);
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        padding: 0.28rem 0.65rem;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.12s;
+        letter-spacing: 0.04em;
+      }
+      .chip:hover {
+        color: var(--text);
+        background: var(--surface2);
+      }
+      .chip.on {
+        color: var(--accent);
+      }
+
+      /* LIVE STATS */
+      .lstats {
+        display: flex;
+        gap: 2.5rem;
+      }
+      .ls {
+        display: flex;
+        flex-direction: column;
+        line-height: 1;
+      }
+      .lv {
+        font-size: 2rem;
+        font-weight: 300;
+        color: var(--accent);
+        letter-spacing: -0.02em;
+        min-width: 3ch;
+      }
+      .lv.dim {
+        color: var(--sub2);
+      }
+      .ll {
+        font-size: 0.62rem;
+        color: var(--sub);
+        letter-spacing: 0.12em;
+        margin-top: 0.2rem;
+        text-transform: uppercase;
+      }
+
+      /* TYPING */
+      .twrap {
         position: relative;
-        background: transparent;
-        border-radius: 12px;
-        padding: 0;
-        margin-bottom: 1.5rem;
         cursor: text;
       }
-      .typing-words {
-        font-family: var(--mono);
+      .words {
         font-size: 1.35rem;
-        line-height: 2.2rem;
-        color: var(--text-muted);
-        letter-spacing: 0.02em;
-        max-height: 6.6rem;
+        line-height: 2.6rem;
+        color: var(--sub);
+        height: 7.8rem;
         overflow: hidden;
-        position: relative;
-        word-break: break-word;
         user-select: none;
+        letter-spacing: 0.03em;
+        word-spacing: 0.12em;
       }
-      .typing-words .char {
+      .word {
+        display: inline-block;
+        margin-right: 0.55rem;
         position: relative;
-        transition: color 0.06s;
       }
-      .typing-words .char.correct {
+      .word.ewrd::after {
+        content: "";
+        position: absolute;
+        bottom: 2px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--wrong);
+        border-radius: 2px;
+      }
+      .ch {
+        position: relative;
+      }
+      .ch.correct {
         color: var(--correct);
       }
-      .typing-words .char.wrong {
+      .ch.wrong {
         color: var(--wrong);
         background: var(--wrong-bg);
         border-radius: 2px;
       }
-      .typing-words .char.extra {
-        color: var(--wrong);
+      .ch.extra {
+        color: var(--extra);
         text-decoration: underline;
         text-decoration-color: var(--wrong);
       }
-      .typing-words .char.cursor::before {
+      .ch.cursor::before {
         content: "";
         position: absolute;
         left: -1px;
-        top: 2px;
+        top: 4px;
         width: 2px;
-        height: 1.6rem;
-        background: var(--cursor-color);
+        height: 1.9rem;
+        background: var(--cursor);
         border-radius: 1px;
-        animation: blink 1s ease-in-out infinite;
+        animation: blink 1s step-end infinite;
+      }
+      .ch.cursor.typed::before {
+        left: auto;
+        right: -2px;
       }
       @keyframes blink {
         0%,
@@ -259,1347 +249,1592 @@
           opacity: 0;
         }
       }
-      .typing-words .char.cursor.typed::before {
-        left: auto;
-        right: -1px;
-      }
-
-      .hidden-input {
-        position: absolute;
-        opacity: 0;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        cursor: text;
-        z-index: 10;
-        font-size: 1rem;
-        background: transparent;
-        border: none;
-        outline: none;
-      }
-
-      .focus-hint {
+      .overlay {
         position: absolute;
         inset: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(15, 15, 15, 0.85);
-        border-radius: 12px;
-        color: var(--text-dim);
-        font-size: 0.85rem;
-        font-family: var(--mono);
+        background: rgba(14, 15, 20, 0.85);
+        border-radius: var(--r);
+        backdrop-filter: blur(3px);
+        color: var(--sub);
+        font-size: 0.82rem;
         letter-spacing: 0.1em;
-        backdrop-filter: blur(2px);
-        pointer-events: none;
         transition: opacity 0.2s;
+        pointer-events: none;
       }
-      .typing-container.focused .focus-hint {
+      .twrap.focused .overlay {
         opacity: 0;
+      }
+      #ghost {
+        position: absolute;
+        opacity: 0;
+        inset: 0;
+        z-index: 5;
+        cursor: text;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: transparent;
+        caret-color: transparent;
+        font-size: 1px;
+        resize: none;
       }
 
       /* CONTROLS */
-      .typing-controls {
+      .brow {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 1rem;
-        margin-top: 1.5rem;
+        gap: 1.5rem;
       }
-      .icon-btn {
-        background: var(--surface);
-        border: 1px solid #2a2a2a;
-        color: var(--text-dim);
-        border-radius: 8px;
-        padding: 0.5rem 0.8rem;
+      .cbtn {
+        background: none;
+        border: none;
+        color: var(--sub);
+        font-family: var(--mono);
+        font-size: 0.8rem;
+        padding: 0.4rem 0.7rem;
+        border-radius: var(--r);
         cursor: pointer;
-        font-size: 1rem;
-        transition: all 0.15s;
+        transition:
+          color 0.12s,
+          background 0.12s;
         display: flex;
         align-items: center;
         gap: 0.4rem;
-        font-family: var(--ui);
-        font-size: 0.8rem;
       }
-      .icon-btn:hover {
+      .cbtn:hover {
         color: var(--accent);
-        border-color: var(--accent-dim);
+        background: var(--surface2);
       }
 
       /* RESULTS */
-      .results-panel {
+      #results {
         display: none;
-        background: var(--surface);
-        border-radius: 16px;
-        padding: 2.5rem;
+        flex-direction: column;
+        align-items: center;
+        gap: 2.5rem;
+        padding: 3rem 0;
+        animation: fadeUp 0.3s ease;
+      }
+      #results.show {
+        display: flex;
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .rmain {
+        display: flex;
+        align-items: flex-end;
+        gap: 3rem;
+      }
+      .rbig {
         text-align: center;
-        border: 1px solid #222;
-        animation: fadeIn 0.3s ease;
       }
-      .results-panel.show {
-        display: block;
-      }
-      .result-wpm {
-        font-family: var(--mono);
-        font-size: 5rem;
+      .rbigv {
+        font-size: 6rem;
         font-weight: 300;
         color: var(--accent);
         line-height: 1;
       }
-      .result-label {
-        color: var(--text-dim);
-        font-size: 0.75rem;
+      .rbigl {
+        font-size: 0.7rem;
+        color: var(--sub);
         letter-spacing: 0.15em;
         text-transform: uppercase;
-        margin-bottom: 0.5rem;
+        margin-top: 0.4rem;
       }
-      .result-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1.5rem;
-        margin: 2rem 0;
-      }
-      .result-stat {
+      .rstats {
         display: flex;
         flex-direction: column;
+        gap: 0.6rem;
+        margin-bottom: 0.6rem;
       }
-      .result-stat .val {
-        font-family: var(--mono);
-        font-size: 1.8rem;
+      .rs {
+        display: flex;
+        align-items: baseline;
+        gap: 0.7rem;
+      }
+      .rsv {
+        font-size: 1.6rem;
         font-weight: 300;
         color: var(--text);
+        min-width: 4ch;
       }
-      .result-stat .lbl {
-        font-size: 0.7rem;
-        color: var(--text-dim);
+      .rsl {
+        font-size: 0.65rem;
+        color: var(--sub);
         letter-spacing: 0.1em;
         text-transform: uppercase;
-        margin-top: 0.2rem;
       }
-      .retry-btn {
+      .retrybtn {
         background: var(--accent);
-        color: #000;
+        color: var(--bg);
         border: none;
-        border-radius: 8px;
-        padding: 0.7rem 2rem;
-        font-family: var(--ui);
-        font-size: 0.85rem;
-        font-weight: 700;
+        border-radius: var(--r);
+        padding: 0.7rem 2.5rem;
+        font-family: var(--mono);
+        font-size: 0.82rem;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
         cursor: pointer;
         transition: all 0.15s;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
       }
-      .retry-btn:hover {
-        background: #f0c720;
+      .retrybtn:hover {
+        background: var(--accent2);
         transform: translateY(-1px);
       }
 
-      /* ===== TEXT INPUT PANEL ===== */
-      .input-panel-wrap {
+      /* TEXT TAB */
+      .ttab {
         display: flex;
         flex-direction: column;
         gap: 1.5rem;
       }
-      .section-title {
-        font-size: 0.7rem;
+      .shd {
+        font-size: 0.65rem;
         letter-spacing: 0.15em;
         text-transform: uppercase;
-        color: var(--text-dim);
-        margin-bottom: 0.75rem;
+        color: var(--sub);
+        margin-bottom: 0.6rem;
       }
-      .sample-books {
+      .bgrid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 0.75rem;
+        grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+        gap: 0.6rem;
       }
-      .book-card {
+      .bcard {
         background: var(--surface);
-        border: 1px solid #252525;
-        border-radius: 10px;
-        padding: 0.85rem 1rem;
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        padding: 0.75rem 1rem;
         cursor: pointer;
-        transition: all 0.15s;
+        transition: all 0.12s;
       }
-      .book-card:hover {
-        border-color: var(--accent-dim);
-        transform: translateY(-1px);
+      .bcard:hover {
+        border-color: var(--accent2);
       }
-      .book-card.selected {
+      .bcard.sel {
         border-color: var(--accent);
         background: var(--surface2);
       }
-      .book-title {
-        font-size: 0.85rem;
-        font-weight: 600;
+      .bct {
+        font-size: 0.82rem;
         color: var(--text);
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.15rem;
       }
-      .book-author {
-        font-size: 0.72rem;
-        color: var(--text-dim);
+      .bca {
+        font-size: 0.7rem;
+        color: var(--sub);
       }
-
-      .text-input-area {
+      .tbox {
         background: var(--surface);
-        border: 1px solid #252525;
-        border-radius: 12px;
+        border: 1px solid var(--border);
+        border-radius: var(--r);
         overflow: hidden;
       }
-      .text-input-header {
-        padding: 0.75rem 1rem;
-        border-bottom: 1px solid #252525;
+      .tbxhd {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        padding: 0.6rem 1rem;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.7rem;
+        color: var(--sub);
+        letter-spacing: 0.06em;
       }
-      .text-input-header span {
-        font-size: 0.72rem;
-        color: var(--text-dim);
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-      .char-count {
-        font-family: var(--mono);
-        font-size: 0.72rem;
-        color: var(--text-dim);
-      }
-      textarea#custom-text {
+      #cta {
         width: 100%;
-        min-height: 200px;
+        min-height: 160px;
         background: transparent;
         border: none;
         outline: none;
         color: var(--text);
         font-family: var(--mono);
-        font-size: 0.9rem;
-        line-height: 1.7;
+        font-size: 0.88rem;
+        line-height: 1.75;
         padding: 1rem;
         resize: vertical;
       }
+      #cta::placeholder {
+        color: var(--sub2);
+      }
 
-      /* PDF Upload */
-      .pdf-drop {
-        border: 2px dashed #2a2a2a;
-        border-radius: 12px;
-        padding: 3rem 2rem;
+      /* PDF */
+      .pzone {
+        border: 2px dashed var(--border);
+        border-radius: var(--r);
+        padding: 2.5rem;
         text-align: center;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all 0.15s;
         position: relative;
       }
-      .pdf-drop:hover,
-      .pdf-drop.drag-over {
-        border-color: var(--accent-dim);
-        background: rgba(226, 183, 20, 0.03);
+      .pzone:hover,
+      .pzone.drag {
+        border-color: var(--accent2);
+        background: rgba(0, 180, 216, 0.03);
       }
-      .pdf-drop input[type="file"] {
+      .pzone input {
         position: absolute;
         inset: 0;
         opacity: 0;
         cursor: pointer;
       }
-      .pdf-icon {
-        font-size: 2.5rem;
-        margin-bottom: 0.75rem;
+      .pico {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
       }
-      .pdf-drop-text {
-        font-size: 0.9rem;
-        color: var(--text-dim);
+      .pztxt {
+        font-size: 0.82rem;
+        color: var(--sub);
       }
-      .pdf-drop-text strong {
+      .pztxt strong {
         color: var(--accent);
       }
-      .pdf-pages {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-        margin-top: 1rem;
-      }
-      .pdf-page-btn {
+      #pstat {
         background: var(--surface);
-        border: 1px solid #2a2a2a;
-        color: var(--text-dim);
-        border-radius: 6px;
-        padding: 0.25rem 0.6rem;
-        font-size: 0.75rem;
-        font-family: var(--mono);
-        cursor: pointer;
-        transition: all 0.12s;
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        padding: 0.75rem 1rem;
+        display: none;
       }
-      .pdf-page-btn:hover {
-        color: var(--accent);
-        border-color: var(--accent-dim);
-      }
-      .pdf-page-btn.selected {
-        background: var(--surface2);
-        color: var(--accent);
-        border-color: var(--accent);
-      }
-
-      .pdf-info {
-        background: var(--surface);
-        border: 1px solid #252525;
-        border-radius: 10px;
-        padding: 0.85rem 1rem;
+      .prow {
         display: flex;
-        align-items: center;
         justify-content: space-between;
-        margin-top: 0.75rem;
+        align-items: center;
+        gap: 1rem;
       }
-      .pdf-filename {
-        font-family: var(--mono);
+      .pnm {
         font-size: 0.82rem;
         color: var(--text);
       }
-      .pdf-meta {
+      .pmt {
+        font-size: 0.7rem;
+        color: var(--sub);
+        margin-top: 0.15rem;
+      }
+      .pchips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin-top: 0.75rem;
+      }
+      .pgchip {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        color: var(--sub);
+        border-radius: 4px;
+        padding: 0.2rem 0.5rem;
         font-size: 0.72rem;
-        color: var(--text-dim);
-        margin-top: 0.1rem;
-      }
-
-      .use-text-btn {
-        background: var(--accent);
-        color: #000;
-        border: none;
-        border-radius: 8px;
-        padding: 0.7rem 1.5rem;
-        font-family: var(--ui);
-        font-size: 0.82rem;
-        font-weight: 700;
         cursor: pointer;
-        transition: all 0.15s;
-        letter-spacing: 0.04em;
+        transition: all 0.1s;
+        font-family: var(--mono);
+      }
+      .pgchip:hover {
+        color: var(--accent);
+        border-color: var(--accent2);
+      }
+      .pgchip.sel {
+        color: var(--accent);
+        border-color: var(--accent);
+        background: rgba(0, 180, 216, 0.08);
+      }
+      .pgchip.all-chip {
+        color: var(--text);
+        border-color: var(--sub2);
+      }
+      .prwrap {
+        margin-top: 0.75rem;
+      }
+      .prbg {
+        background: var(--surface2);
+        border-radius: 4px;
+        height: 4px;
+        overflow: hidden;
+      }
+      .prfg {
+        height: 100%;
+        background: var(--accent);
+        border-radius: 4px;
+        transition: width 0.2s;
+        width: 0%;
+      }
+      .prlbl {
+        font-size: 0.68rem;
+        color: var(--sub);
+        margin-top: 0.3rem;
+      }
+      .arow {
+        display: flex;
+        gap: 0.75rem;
+      }
+      .abtn {
+        border: none;
+        border-radius: var(--r);
+        padding: 0.6rem 1.4rem;
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        font-weight: 500;
+        letter-spacing: 0.06em;
         text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.12s;
       }
-      .use-text-btn:hover {
-        background: #f0c720;
+      .abtn.pri {
+        background: var(--accent);
+        color: var(--bg);
       }
-      .use-text-btn:disabled {
-        opacity: 0.4;
+      .abtn.pri:hover {
+        background: var(--accent2);
+      }
+      .abtn.sec {
+        background: var(--surface2);
+        color: var(--accent);
+        border: 1px solid var(--border);
+      }
+      .abtn.sec:hover {
+        border-color: var(--accent2);
+      }
+      .abtn:disabled {
+        opacity: 0.35;
         cursor: not-allowed;
       }
 
-      /* ===== READ PANEL ===== */
-      .read-toolbar {
+      /* READ TAB */
+      .rtab {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      .rtoolbar {
         display: flex;
         align-items: center;
         gap: 1rem;
-        margin-bottom: 1.5rem;
         flex-wrap: wrap;
       }
-      .read-controls {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-      }
-      .read-label {
-        font-size: 0.72rem;
-        color: var(--text-dim);
+      .slbl {
+        font-size: 0.7rem;
+        color: var(--sub);
         letter-spacing: 0.08em;
-        text-transform: uppercase;
+        white-space: nowrap;
       }
-      input[type="range"].speed-slider {
+      input[type="range"].sl {
         -webkit-appearance: none;
-        background: var(--surface3);
-        border-radius: 4px;
-        height: 4px;
-        width: 120px;
+        height: 3px;
+        background: var(--surface2);
+        border-radius: 3px;
         outline: none;
+        width: 110px;
       }
-      input[type="range"].speed-slider::-webkit-slider-thumb {
+      input[type="range"].sl::-webkit-slider-thumb {
         -webkit-appearance: none;
-        width: 14px;
-        height: 14px;
+        width: 13px;
+        height: 13px;
         background: var(--accent);
         border-radius: 50%;
         cursor: pointer;
       }
-      .speed-val {
-        font-family: var(--mono);
-        font-size: 0.82rem;
+      .snum {
+        font-size: 0.8rem;
         color: var(--accent);
-        min-width: 40px;
+        min-width: 70px;
       }
-
-      .read-content {
+      .rplaybtn {
+        background: var(--accent);
+        color: var(--bg);
+        border: none;
+        border-radius: var(--r);
+        padding: 0.4rem 1rem;
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.12s;
+      }
+      .rplaybtn:hover {
+        background: var(--accent2);
+      }
+      .rstopbtn {
+        background: var(--surface2);
+        color: var(--sub);
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        padding: 0.4rem 1rem;
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        cursor: pointer;
+        transition: all 0.12s;
+      }
+      .rstopbtn:hover {
+        color: var(--text);
+      }
+      .ttsrow {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        padding: 0.75rem 1rem;
         background: var(--surface);
-        border: 1px solid #222;
-        border-radius: 12px;
-        padding: 2.5rem 3rem;
-        max-height: 60vh;
-        overflow-y: auto;
-        position: relative;
+        border: 1px solid var(--border);
+        border-radius: var(--r);
       }
-      .read-content::-webkit-scrollbar {
+      .ttslbl {
+        font-size: 0.7rem;
+        color: var(--sub);
+        letter-spacing: 0.08em;
+      }
+      select.ttsv {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        border-radius: 4px;
+        padding: 0.3rem 0.5rem;
+        outline: none;
+        cursor: pointer;
+        max-width: 200px;
+      }
+      .ttsbtn {
+        background: var(--surface2);
+        color: var(--sub);
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        padding: 0.35rem 0.8rem;
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: all 0.12s;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
+      .ttsbtn:hover {
+        color: var(--accent);
+        border-color: var(--accent2);
+      }
+      .ttsbtn.spk {
+        color: var(--accent);
+        border-color: var(--accent);
+        animation: pulse 1.5s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.6;
+        }
+      }
+      .rcontent {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        padding: 2rem 2.5rem;
+        max-height: 55vh;
+        overflow-y: auto;
+        line-height: 1.9;
+        font-size: 0.95rem;
+        color: var(--sub);
+      }
+      .rcontent::-webkit-scrollbar {
         width: 4px;
       }
-      .read-content::-webkit-scrollbar-track {
-        background: transparent;
-      }
-      .read-content::-webkit-scrollbar-thumb {
-        background: #2a2a2a;
+      .rcontent::-webkit-scrollbar-thumb {
+        background: var(--surface2);
         border-radius: 2px;
       }
-
-      .read-text {
-        font-family: var(--mono);
-        font-size: 1rem;
-        line-height: 1.9;
-        color: var(--text-dim);
-        white-space: pre-wrap;
-        word-break: break-word;
+      .rw {
+        transition: color 0.1s;
+        cursor: default;
       }
-      .read-text .highlight-word {
+      .rw.done {
+        color: var(--text);
+      }
+      .rw.active {
         color: var(--accent);
-        background: rgba(226, 183, 20, 0.12);
+        background: rgba(0, 180, 216, 0.1);
         border-radius: 3px;
         padding: 0 1px;
       }
-      .read-text .read-word {
-        transition: color 0.15s;
-      }
-      .read-text .passed {
-        color: var(--text);
-      }
-
-      .read-progress {
-        margin-top: 1rem;
+      .rpwrap {
         background: var(--surface2);
         border-radius: 4px;
         height: 3px;
         overflow: hidden;
       }
-      .read-progress-bar {
+      .rpbar {
         height: 100%;
         background: var(--accent);
-        transition: width 0.3s ease;
         border-radius: 4px;
+        transition: width 0.3s;
         width: 0%;
       }
 
       /* TOAST */
-      .toast {
+      #toast {
         position: fixed;
         bottom: 2rem;
         left: 50%;
         transform: translateX(-50%);
         background: var(--surface2);
-        border: 1px solid var(--accent-dim);
+        border: 1px solid var(--border);
         color: var(--accent);
-        border-radius: 8px;
-        padding: 0.6rem 1.5rem;
-        font-size: 0.82rem;
-        font-family: var(--mono);
+        border-radius: var(--r);
+        padding: 0.55rem 1.4rem;
+        font-size: 0.78rem;
         letter-spacing: 0.06em;
-        z-index: 1000;
+        z-index: 999;
         opacity: 0;
-        transition: opacity 0.2s;
         pointer-events: none;
+        transition: opacity 0.2s;
+        white-space: nowrap;
       }
-      .toast.show {
+      #toast.show {
         opacity: 1;
-      }
-
-      /* RESPONSIVE */
-      @media (max-width: 640px) {
-        main {
-          padding: 1rem;
-        }
-        .typing-words {
-          font-size: 1.1rem;
-          line-height: 2rem;
-          max-height: 6rem;
-        }
-        .result-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-        .read-content {
-          padding: 1.5rem;
-        }
       }
     </style>
   </head>
   <body>
-    <header>
+    <div id="hdr">
       <div class="logo">
-        <span class="logo-icon">⌨</span>
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M20 5H4a1 1 0 00-1 1v12a1 1 0 001 1h16a1 1 0 001-1V6a1 1 0 00-1-1zM7 15H5v-2h2v2zm0-4H5V9h2v2zm4 4H9v-2h2v2zm0-4H9V9h2v2zm4 4h-2v-2h2v2zm0-4h-2V9h2v2zm4 4h-2v-2h2v2zm0-4h-2V9h2v2z"
+          />
+        </svg>
         TypeCraft
       </div>
-      <nav class="nav-links">
-        <button class="nav-btn active" onclick="switchPanel('type')">
-          Type
+      <nav class="nav">
+        <button class="nv on" data-sc="type" onclick="showSc('type', this)">
+          type
         </button>
-        <button class="nav-btn" onclick="switchPanel('read')">Read</button>
-        <button class="nav-btn" onclick="switchPanel('text')">+ Text</button>
+        <button class="nv" data-sc="read" onclick="showSc('read', this)">
+          read
+        </button>
+        <button class="nv" data-sc="text" onclick="showSc('text', this)">
+          text
+        </button>
       </nav>
-    </header>
+      <div style="width: 100px"></div>
+    </div>
 
-    <main>
-      <!-- ===== TYPING PANEL ===== -->
-      <div id="panel-type" class="panel active">
-        <div class="typing-toolbar">
-          <div class="toolbar-left">
-            <span
-              class="section-title"
-              style="margin-bottom: 0; display: flex; align-items: center"
-              >Mode:</span
-            >
-            <button class="pill-btn active" onclick="setMode('words', this)">
-              Words
+    <div id="app">
+      <!-- ══ TYPE ══════════════════════════════════════════════════════ -->
+      <div id="sc-type" class="sc vis">
+        <div class="toolbar">
+          <button class="chip on" data-m="time" onclick="setMode('time', this)">
+            time
+          </button>
+          <button class="chip" data-m="words" onclick="setMode('words', this)">
+            words
+          </button>
+          <button class="chip" data-m="quote" onclick="setMode('quote', this)">
+            quote
+          </button>
+          <button
+            class="chip"
+            data-m="custom"
+            onclick="setMode('custom', this)"
+          >
+            custom
+          </button>
+          <div class="sep"></div>
+          <div id="topts">
+            <button class="chip" data-v="15" onclick="setOpt(15, this)">
+              15
             </button>
-            <button class="pill-btn" onclick="setMode('quote', this)">
-              Quote
+            <button class="chip on" data-v="30" onclick="setOpt(30, this)">
+              30
             </button>
-            <button class="pill-btn" onclick="setMode('custom', this)">
-              Custom
+            <button class="chip" data-v="60" onclick="setOpt(60, this)">
+              60
+            </button>
+            <button class="chip" data-v="120" onclick="setOpt(120, this)">
+              120
             </button>
           </div>
-          <div class="toolbar-left">
-            <span
-              class="section-title"
-              style="margin-bottom: 0; display: flex; align-items: center"
-              >Time:</span
-            >
-            <button class="pill-btn" onclick="setTimer(15, this)">15s</button>
-            <button class="pill-btn active" onclick="setTimer(30, this)">
-              30s
+          <div id="wopts" style="display: none">
+            <button class="chip" data-v="10" onclick="setOpt(10, this)">
+              10
             </button>
-            <button class="pill-btn" onclick="setTimer(60, this)">60s</button>
-            <button class="pill-btn" onclick="setTimer(0, this)">∞</button>
+            <button class="chip on" data-v="25" onclick="setOpt(25, this)">
+              25
+            </button>
+            <button class="chip" data-v="50" onclick="setOpt(50, this)">
+              50
+            </button>
+            <button class="chip" data-v="100" onclick="setOpt(100, this)">
+              100
+            </button>
           </div>
         </div>
 
-        <div class="stats-bar">
-          <div class="stat">
-            <span class="stat-label">WPM</span>
-            <span class="stat-value idle" id="stat-wpm">—</span>
+        <div class="lstats">
+          <div class="ls">
+            <div class="lv dim" id="s-wpm">—</div>
+            <div class="ll">wpm</div>
           </div>
-          <div class="stat">
-            <span class="stat-label">Accuracy</span>
-            <span class="stat-value idle" id="stat-acc">—</span>
+          <div class="ls">
+            <div class="lv dim" id="s-acc">—</div>
+            <div class="ll">acc</div>
           </div>
-          <div class="stat">
-            <span class="stat-label">Time</span>
-            <span class="stat-value idle" id="stat-time">—</span>
-          </div>
-          <div class="stat">
-            <span class="stat-label">Chars</span>
-            <span class="stat-value idle" id="stat-chars">—</span>
+          <div class="ls">
+            <div class="lv dim" id="s-time">—</div>
+            <div class="ll" id="tlbl">time</div>
           </div>
         </div>
 
-        <div
-          class="typing-container"
-          id="typing-container"
-          onclick="focusInput()"
-        >
-          <div class="typing-words" id="typing-words"></div>
+        <div class="twrap" id="tw" onclick="fg()">
+          <div class="words" id="words"></div>
           <input
-            class="hidden-input"
-            id="hidden-input"
+            id="ghost"
             autocomplete="off"
             autocorrect="off"
             autocapitalize="off"
             spellcheck="false"
           />
-          <div class="focus-hint" id="focus-hint">click to focus</div>
+          <div class="overlay" id="overlay">
+            click or press any key to start
+          </div>
         </div>
 
-        <div class="typing-controls">
-          <button class="icon-btn" onclick="resetTyping()">↺ Restart</button>
-          <button class="icon-btn" onclick="newText()">⟳ New Text</button>
+        <div class="brow">
+          <button class="cbtn" onclick="doReset()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M17.65 6.35A7.96 7.96 0 0012 4C7.58 4 4 7.58 4 12s3.58 8 8 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"
+              />
+            </svg>
+            restart
+          </button>
+          <button class="cbtn" onclick="doNew()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M19 8l-4 4h3c0 3.31-2.69 6-6 6a5.87 5.87 0 01-2.8-.7l-1.46 1.46A7.93 7.93 0 0012 20c4.42 0 8-3.58 8-8h3l-4-4zM6 12c0-3.31 2.69-6 6-6 1.01 0 1.97.25 2.8.7l1.46-1.46A7.93 7.93 0 0012 4c-4.42 0-8 3.58-8 8H1l4 4 4-4H6z"
+              />
+            </svg>
+            next
+          </button>
         </div>
 
-        <div class="results-panel" id="results-panel">
-          <div class="result-label">WPM</div>
-          <div class="result-wpm" id="res-wpm">0</div>
-          <div class="result-grid">
-            <div class="result-stat">
-              <span class="val" id="res-acc">0%</span
-              ><span class="lbl">Accuracy</span>
+        <div id="results">
+          <div class="rmain">
+            <div class="rbig">
+              <div class="rbigv" id="r-wpm">0</div>
+              <div class="rbigl">wpm</div>
             </div>
-            <div class="result-stat">
-              <span class="val" id="res-chars">0</span
-              ><span class="lbl">Chars</span>
-            </div>
-            <div class="result-stat">
-              <span class="val" id="res-time">0s</span
-              ><span class="lbl">Time</span>
-            </div>
-            <div class="result-stat">
-              <span class="val" id="res-errors">0</span
-              ><span class="lbl">Errors</span>
+            <div class="rstats">
+              <div class="rs">
+                <span class="rsv" id="r-acc">0%</span
+                ><span class="rsl">acc</span>
+              </div>
+              <div class="rs">
+                <span class="rsv" id="r-raw">0</span
+                ><span class="rsl">raw</span>
+              </div>
+              <div class="rs">
+                <span class="rsv" id="r-chars">0/0</span
+                ><span class="rsl">chars</span>
+              </div>
+              <div class="rs">
+                <span class="rsv" id="r-time">0s</span
+                ><span class="rsl">time</span>
+              </div>
             </div>
           </div>
-          <button class="retry-btn" onclick="resetTyping()">↺ Try Again</button>
+          <button class="retrybtn" onclick="doReset()">
+            tab ↵ — try again
+          </button>
         </div>
       </div>
 
-      <!-- ===== READ PANEL ===== -->
-      <div id="panel-read" class="panel">
-        <div class="read-toolbar">
-          <div class="read-controls">
-            <span class="read-label">Speed</span>
+      <!-- ══ READ ══════════════════════════════════════════════════════ -->
+      <div id="sc-read" class="sc">
+        <div class="rtab">
+          <div class="rtoolbar">
+            <span class="slbl">speed</span>
             <input
               type="range"
-              class="speed-slider"
-              id="speed-slider"
-              min="50"
-              max="500"
+              class="sl"
+              id="rspd"
+              min="60"
+              max="600"
               value="200"
-              oninput="updateSpeed()"
+              oninput="updRSpd()"
             />
-            <span class="speed-val" id="speed-val">200 WPM</span>
+            <span class="snum" id="rspd-v">200 wpm</span>
+            <div class="sep"></div>
+            <button class="rplaybtn" id="playbtn" onclick="togPlay()">
+              ▶ play
+            </button>
+            <button class="rstopbtn" onclick="stopPlay()">■ stop</button>
+            <button
+              class="chip"
+              onclick="showSc('text', document.querySelector('[data-sc=text]'))"
+            >
+              + text
+            </button>
           </div>
-          <button class="pill-btn" id="read-play-btn" onclick="toggleRead()">
-            ▶ Play
-          </button>
-          <button class="pill-btn" onclick="stopRead()">■ Stop</button>
-          <button class="pill-btn" onclick="switchPanel('text')">
-            + Load Text
-          </button>
-        </div>
-        <div class="read-content" id="read-content">
-          <div class="read-text" id="read-text">
-            Load some text first from the "+ Text" tab, or use the sample text
-            below.
+
+          <div class="ttsrow">
+            <span class="ttslbl">🔊 speech</span>
+            <select class="ttsv" id="vsel"></select>
+            <span class="slbl">rate</span>
+            <input
+              type="range"
+              class="sl"
+              id="ttsrate"
+              min="0.5"
+              max="2"
+              step="0.1"
+              value="1"
+              oninput="
+                document.getElementById('ttsrv').textContent = this.value + '×'
+              "
+            />
+            <span class="snum" id="ttsrv">1×</span>
+            <button class="ttsbtn" id="ttsbtn" onclick="togTTS()">
+              ▶ read aloud
+            </button>
+            <button class="ttsbtn" onclick="stopTTS()">■ stop</button>
           </div>
-        </div>
-        <div class="read-progress">
-          <div class="read-progress-bar" id="read-progress-bar"></div>
+
+          <div class="rcontent" id="rcont">
+            <span style="color: var(--sub2)"
+              >Load text from the
+              <strong style="color: var(--sub)">text</strong> tab first.</span
+            >
+          </div>
+          <div class="rpwrap"><div class="rpbar" id="rpbar"></div></div>
         </div>
       </div>
 
-      <!-- ===== TEXT INPUT PANEL ===== -->
-      <div id="panel-text" class="panel">
-        <div class="input-panel-wrap">
+      <!-- ══ TEXT ══════════════════════════════════════════════════════ -->
+      <div id="sc-text" class="sc">
+        <div class="ttab">
           <div>
-            <div class="section-title">Sample Books</div>
-            <div class="sample-books" id="sample-books"></div>
+            <div class="shd">sample books</div>
+            <div class="bgrid" id="bgrid"></div>
           </div>
-
           <div>
-            <div class="section-title">Custom Text</div>
-            <div class="text-input-area">
-              <div class="text-input-header">
-                <span>Paste your text here</span>
-                <span class="char-count" id="char-count">0 chars</span>
+            <div class="shd">custom text</div>
+            <div class="tbox">
+              <div class="tbxhd">
+                <span>paste any text</span>
+                <span id="cc">0 chars · 0 words</span>
               </div>
               <textarea
-                id="custom-text"
-                placeholder="Paste a paragraph from any book, article, or write your own text..."
-                oninput="updateCharCount()"
+                id="cta"
+                placeholder="Paste any chapter, article, or book text here..."
+                oninput="onTA()"
               ></textarea>
             </div>
           </div>
-
           <div>
-            <div class="section-title">Upload PDF</div>
-            <div class="pdf-drop" id="pdf-drop">
+            <div class="shd">upload pdf</div>
+            <div class="pzone" id="pzone">
               <input
                 type="file"
-                id="pdf-input"
+                id="pfile"
                 accept=".pdf"
-                onchange="handlePdfUpload(event)"
+                onchange="loadPDF(this.files[0])"
               />
-              <div class="pdf-icon">📄</div>
-              <div class="pdf-drop-text">
-                Drop a PDF or <strong>click to browse</strong>
+              <div class="pico">📄</div>
+              <div class="pztxt">
+                Drop a PDF here or <strong>click to browse</strong>
               </div>
               <div
                 style="
-                  font-size: 0.75rem;
-                  color: var(--text-muted);
-                  margin-top: 0.4rem;
+                  font-size: 0.7rem;
+                  color: var(--sub2);
+                  margin-top: 0.3rem;
                 "
               >
-                Extracts text for typing or reading
+                All pages extracted — select which to use
               </div>
             </div>
-            <div id="pdf-info" style="display: none">
-              <div class="pdf-info">
+            <div id="pstat">
+              <div class="prow">
                 <div>
-                  <div class="pdf-filename" id="pdf-filename">document.pdf</div>
-                  <div class="pdf-meta" id="pdf-meta">Loading...</div>
-                </div>
-                <div style="display: flex; gap: 0.5rem; align-items: center">
-                  <span class="read-label">Pages:</span>
-                  <div class="pdf-pages" id="pdf-pages"></div>
+                  <div class="pnm" id="pnm">—</div>
+                  <div class="pmt" id="pmt">—</div>
                 </div>
               </div>
+              <div class="prwrap" id="prwrap">
+                <div class="prbg"><div class="prfg" id="pbar"></div></div>
+                <div class="prlbl" id="prlbl">Extracting pages...</div>
+              </div>
+              <div class="pchips" id="pchips"></div>
             </div>
           </div>
-
-          <div style="display: flex; gap: 0.75rem; align-items: center">
-            <button class="use-text-btn" onclick="applyText('type')">
-              Use for Typing ↗
+          <div class="arow">
+            <button class="abtn pri" onclick="applyText('type')">
+              use for typing →
             </button>
-            <button
-              class="use-text-btn"
-              onclick="applyText('read')"
-              style="
-                background: var(--surface2);
-                color: var(--accent);
-                border: 1px solid var(--accent-dim);
-              "
-            >
-              Use for Reading ↗
+            <button class="abtn sec" onclick="applyText('read')">
+              use for reading →
             </button>
           </div>
         </div>
       </div>
-    </main>
-
-    <div class="toast" id="toast"></div>
+    </div>
+    <div id="toast"></div>
 
     <script>
-      // PDF.js setup
-      if (window.pdfjsLib) {
+      // ── PDF.js ──────────────────────────────────────────────────────
+      if (window.pdfjsLib)
         pdfjsLib.GlobalWorkerOptions.workerSrc =
           "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-      }
 
-      // ===== SAMPLE TEXTS =====
-      const SAMPLES = {
-        words: [
-          "the quick brown fox jumps over the lazy dog",
-          "pack my box with five dozen liquor jugs",
-          "how vexingly quick daft zebras jump",
-          "sphinx of black quartz judge my vow",
-          "the five boxing wizards jump quickly",
-          "jackdaws love my big sphinx of quartz",
-          "the job requires extra pluck and zeal from every young wage earner",
-          "a mad boxer shot a quick gloved jab to the jaw of his dizzy opponent",
-        ],
-        quote: [
-          "It is a truth universally acknowledged that a single man in possession of a good fortune must be in want of a wife.",
-          "Call me Ishmael. Some years ago never mind how long precisely having little or no money in my purse and nothing particular to interest me on shore I thought I would sail about a little and see the watery part of the world.",
-          "It was the best of times it was the worst of times it was the age of wisdom it was the age of foolishness it was the epoch of belief it was the epoch of incredulity.",
-          "In my younger and more vulnerable years my father gave me some advice that I have been turning over in my mind ever since. Whenever you feel like criticizing anyone he told me just remember that all the people in this world haven't had the advantages that you've had.",
-          "It was a bright cold day in April and the clocks were striking thirteen. Winston Smith his chin nuzzled into his breast in an effort to escape the vile wind slipped quickly through the glass doors of Victory Mansions.",
-          "Stately plump Buck Mulligan came from the stairhead bearing a bowl of lather on which a mirror and a razor lay crossed. A yellow dressinggown ungirdled was sustained gently behind him on the mild morning air.",
-          "Happy families are all alike every unhappy family is unhappy in its own way. Everything was in confusion in the Oblonskys' house. The wife had discovered that the husband was carrying on an intrigue with a French girl who had been a governess in their family.",
-          "Many years later as he faced the firing squad Colonel Aureliano Buendía was to remember that distant afternoon when his father took him to discover ice.",
-        ],
-      };
+      // ── WORD BANK ───────────────────────────────────────────────────
+      const WB =
+        "the be to of and a in that have it for not on with he as you do at this but his by from they we say her she or an will my one all would there their what so up out if about who get which go me when make can like time no just him know take people into year your good some could them see other than then now look only come its over think also back after use two how our work first well way even new want because any these give day most us great between need large often hand high place hold free real life few north open seem together next white children begin got walk example ease paper group always music those both mark book letter until mile river car feet care second enough plain girl usual young ready above ever red list though feel talk bird soon body dog family direct pose leave real world still every found still may long down day get come made may part".split(
+          " ",
+        );
 
-      const BOOKS = [
-        {
-          title: "Pride & Prejudice",
-          author: "Jane Austen",
-          key: "quote",
-          idx: 0,
-        },
-        { title: "Moby Dick", author: "Herman Melville", key: "quote", idx: 1 },
-        {
-          title: "A Tale of Two Cities",
-          author: "Charles Dickens",
-          key: "quote",
-          idx: 2,
-        },
-        {
-          title: "The Great Gatsby",
-          author: "F. Scott Fitzgerald",
-          key: "quote",
-          idx: 3,
-        },
-        { title: "1984", author: "George Orwell", key: "quote", idx: 4 },
-        { title: "Ulysses", author: "James Joyce", key: "quote", idx: 5 },
-        { title: "Anna Karenina", author: "Leo Tolstoy", key: "quote", idx: 6 },
-        {
-          title: "One Hundred Years of Solitude",
-          author: "Gabriel García Márquez",
-          key: "quote",
-          idx: 7,
-        },
+      const QUOTES = [
+        "It was a bright cold day in April, and the clocks were striking thirteen. Winston Smith, his chin nuzzled into his breast in an effort to escape the vile wind, slipped quickly through the glass doors of Victory Mansions.",
+        "Call me Ishmael. Some years ago, never mind how long precisely, having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world.",
+        "It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife. However little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families.",
+        "It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness.",
+        "In my younger and more vulnerable years my father gave me some advice that I have been turning over in my mind ever since. Whenever you feel like criticizing anyone, he told me, just remember that all the people in this world haven't had the advantages that you've had.",
+        "Many years later, as he faced the firing squad, Colonel Aureliano Buendía was to remember that distant afternoon when his father took him to discover ice. At that time Macondo was a village of twenty adobe houses.",
+        "Happy families are all alike; every unhappy family is unhappy in its own way. Everything was in confusion in the Oblonskys' house. The wife had discovered that the husband was carrying on an intrigue with a French girl.",
+        "All animals are equal, but some animals are more equal than others. It was a maxim that had been carved on the barn wall and was never disputed.",
+        "It was a pleasure to burn. It was a special pleasure to see things eaten, to see things blackened and changed. With the brass nozzle in his fists, with this great python spitting its venomous kerosene upon the world.",
+        "The sky above the port was the color of television, tuned to a dead channel. All this happened, more or less. The war parts, anyway, are pretty much true.",
       ];
 
-      // ===== STATE =====
-      let state = {
-        mode: "words",
-        timerDuration: 30,
+      const BOOKS = [
+        { t: "1984", a: "George Orwell", i: 0 },
+        { t: "Moby Dick", a: "Herman Melville", i: 1 },
+        { t: "Pride & Prejudice", a: "Jane Austen", i: 2 },
+        { t: "A Tale of Two Cities", a: "Charles Dickens", i: 3 },
+        { t: "The Great Gatsby", a: "F. Scott Fitzgerald", i: 4 },
+        { t: "100 Years of Solitude", a: "G. García Márquez", i: 5 },
+        { t: "Anna Karenina", a: "Leo Tolstoy", i: 6 },
+        { t: "Animal Farm", a: "George Orwell", i: 7 },
+        { t: "Fahrenheit 451", a: "Ray Bradbury", i: 8 },
+        { t: "Neuromancer", a: "William Gibson", i: 9 },
+      ];
+
+      // ── STATE ───────────────────────────────────────────────────────
+      const S = {
+        mode: "time",
+        opt: 30,
         text: "",
         typed: "",
         started: false,
-        finished: false,
-        startTime: null,
-        timerInterval: null,
+        done: false,
+        startMs: null,
         elapsed: 0,
-        totalKeystrokes: 0,
-        errorCount: 0,
-        customText: "",
+        tick: null,
+        keys: 0,
+        errors: 0,
+        custom: "",
       };
 
-      let readState = {
-        words: [],
-        index: 0,
-        interval: null,
-        playing: false,
-        speed: 200,
-      };
-
-      // ===== PANEL SWITCHING =====
-      function switchPanel(name) {
+      // ── SCREEN ──────────────────────────────────────────────────────
+      function showSc(name, btn) {
         document
-          .querySelectorAll(".panel")
-          .forEach((p) => p.classList.remove("active"));
-        document.getElementById("panel-" + name).classList.add("active");
-        document.querySelectorAll(".nav-btn").forEach((b, i) => {
-          b.classList.toggle("active", ["type", "read", "text"][i] === name);
-        });
+          .querySelectorAll(".sc")
+          .forEach((s) => s.classList.remove("vis"));
+        document.getElementById("sc-" + name).classList.add("vis");
+        document
+          .querySelectorAll(".nv")
+          .forEach((b) => b.classList.remove("on"));
+        if (btn) btn.classList.add("on");
       }
 
-      // ===== SETUP =====
-      function buildBookCards() {
-        const container = document.getElementById("sample-books");
-        BOOKS.forEach((book, i) => {
-          const card = document.createElement("div");
-          card.className = "book-card";
-          card.innerHTML = `<div class="book-title">${book.title}</div><div class="book-author">${book.author}</div>`;
-          card.onclick = () => {
-            document
-              .querySelectorAll(".book-card")
-              .forEach((c) => c.classList.remove("selected"));
-            card.classList.add("selected");
-            const text = SAMPLES.quote[book.idx];
-            document.getElementById("custom-text").value = text;
-            updateCharCount();
-          };
-          container.appendChild(card);
-        });
+      // ── MODE ────────────────────────────────────────────────────────
+      function setMode(m, btn) {
+        S.mode = m;
+        document
+          .querySelectorAll("[data-m]")
+          .forEach((b) => b.classList.remove("on"));
+        btn.classList.add("on");
+        const to = document.getElementById("topts"),
+          wo = document.getElementById("wopts");
+        if (m === "time") {
+          to.style.display = "";
+          wo.style.display = "none";
+          S.opt = 30;
+          setOptChip(to, "30");
+        } else if (m === "words") {
+          to.style.display = "none";
+          wo.style.display = "";
+          S.opt = 25;
+          setOptChip(wo, "25");
+        } else {
+          to.style.display = "none";
+          wo.style.display = "none";
+        }
+        doReset();
+      }
+      function setOptChip(cont, val) {
+        cont
+          .querySelectorAll(".chip")
+          .forEach((c) => c.classList.toggle("on", c.dataset.v === val));
+      }
+      function setOpt(v, btn) {
+        S.opt = v;
+        btn.parentElement
+          .querySelectorAll(".chip")
+          .forEach((b) => b.classList.remove("on"));
+        btn.classList.add("on");
+        doReset();
       }
 
-      function getRandomText() {
-        const pool =
-          state.mode === "custom" && state.customText
-            ? [state.customText]
-            : SAMPLES[state.mode] || SAMPLES.quote;
-        return pool[Math.floor(Math.random() * pool.length)];
+      // ── GENERATE TEXT ────────────────────────────────────────────────
+      function genText() {
+        if (S.mode === "custom") return S.custom || genW(40);
+        if (S.mode === "quote")
+          return QUOTES[Math.floor(Math.random() * QUOTES.length)];
+        if (S.mode === "words") return genW(S.opt);
+        // time: generate words for ~2× duration at ~60wpm
+        return genW(Math.max(60, S.opt * 2));
+      }
+      function genW(n) {
+        const a = [];
+        for (let i = 0; i < n; i++)
+          a.push(WB[Math.floor(Math.random() * WB.length)]);
+        return a.join(" ");
       }
 
+      // ── INIT TYPING ──────────────────────────────────────────────────
       function initTyping() {
-        state.text = getRandomText();
-        state.typed = "";
-        state.started = false;
-        state.finished = false;
-        state.startTime = null;
-        state.elapsed = 0;
-        state.totalKeystrokes = 0;
-        state.errorCount = 0;
-        clearInterval(state.timerInterval);
-
-        document.getElementById("results-panel").classList.remove("show");
-        document.getElementById("typing-words").style.display = "block";
-
-        updateStats(false);
-        renderWords();
+        S.text = genText();
+        S.typed = "";
+        S.started = false;
+        S.done = false;
+        S.startMs = null;
+        S.elapsed = 0;
+        S.keys = 0;
+        S.errors = 0;
+        clearInterval(S.tick);
+        document.getElementById("results").classList.remove("show");
+        document.getElementById("words").style.visibility = "visible";
+        document.querySelector(".lstats").style.visibility = "visible";
+        dimStats();
+        render();
+        document.getElementById("ghost").value = "";
       }
 
-      function renderWords() {
-        const container = document.getElementById("typing-words");
-        const text = state.text;
-        const typed = state.typed;
-
-        let html = "";
-        for (let i = 0; i < text.length; i++) {
-          let cls = "";
-          if (i < typed.length) {
-            cls = typed[i] === text[i] ? "correct" : "wrong";
-          } else if (i === typed.length) {
-            cls = "cursor";
-          }
-          const ch = text[i] === " " ? "&nbsp;" : escapeHtml(text[i]);
-          html += `<span class="char ${cls}">${ch}</span>`;
+      function dimStats() {
+        const sv = document.getElementById("s-wpm"),
+          sa = document.getElementById("s-acc"),
+          st = document.getElementById("s-time");
+        sv.textContent = "—";
+        sv.classList.add("dim");
+        sa.textContent = "—";
+        sa.classList.add("dim");
+        st.classList.add("dim");
+        const tl = document.getElementById("tlbl");
+        if (S.mode === "time") {
+          st.textContent = S.opt;
+          tl.textContent = "time";
+        } else if (S.mode === "words") {
+          st.textContent = S.opt;
+          tl.textContent = "words";
+        } else {
+          st.textContent = "—";
+          tl.textContent = "time";
         }
+      }
 
-        // Extra typed chars beyond text
+      // ── RENDER ───────────────────────────────────────────────────────
+      const EC = { "<": "&lt;", ">": "&gt;", "&": "&amp;", " ": "&nbsp;" };
+      const ec = (c) => EC[c] || c;
+
+      function render() {
+        const el = document.getElementById("words");
+        const { text, typed } = S;
+        const wds = text.split(" ");
+        let gi = 0,
+          html = "";
+        for (let wi = 0; wi < wds.length; wi++) {
+          const wd = wds[wi];
+          let wh = "",
+            herr = false;
+          for (let ci = 0; ci < wd.length; ci++) {
+            let cls = "ch";
+            if (gi < typed.length) {
+              cls += typed[gi] === text[gi] ? " correct" : " wrong";
+              if (typed[gi] !== text[gi]) herr = true;
+            } else if (gi === typed.length) cls += " cursor";
+            wh += `<span class="${cls}">${ec(wd[ci])}</span>`;
+            gi++;
+          }
+          // space
+          if (gi < text.length) {
+            let cls = "ch";
+            if (gi < typed.length) {
+              cls += typed[gi] === text[gi] ? " correct" : " wrong";
+            } else if (gi === typed.length) cls += " cursor typed";
+            wh += `<span class="${cls}">&nbsp;</span>`;
+          }
+          gi++;
+          html += `<span class="word${herr ? " ewrd" : ""}">${wh}</span> `;
+        }
         if (typed.length > text.length) {
-          for (let i = text.length; i < typed.length; i++) {
-            html += `<span class="char extra">${escapeHtml(typed[i])}</span>`;
-          }
+          for (let i = text.length; i < typed.length; i++)
+            html += `<span class="ch extra">${ec(typed[i])}</span>`;
         }
-
-        container.innerHTML = html;
-        scrollToCursor();
+        el.innerHTML = html;
+        scrollLine();
       }
 
-      function scrollToCursor() {
-        const container = document.getElementById("typing-words");
-        const cursor = container.querySelector(".cursor");
-        if (!cursor) return;
-        const containerTop = container.getBoundingClientRect().top;
-        const cursorTop = cursor.getBoundingClientRect().top;
-        const lineH = 35;
-        if (cursorTop - containerTop > lineH * 2) {
-          container.scrollTop += cursorTop - containerTop - lineH;
+      function scrollLine() {
+        const el = document.getElementById("words");
+        const cur = el.querySelector(".cursor");
+        if (!cur) return;
+        const et = el.getBoundingClientRect().top,
+          ct = cur.getBoundingClientRect().top;
+        const lh = parseFloat(getComputedStyle(el).lineHeight) || 44;
+        if (ct - et > lh * 1.8) el.scrollTop += ct - et - lh;
+      }
+
+      // ── GHOST INPUT ──────────────────────────────────────────────────
+      const ghost = document.getElementById("ghost");
+      const tw = document.getElementById("tw");
+
+      function fg() {
+        ghost.focus();
+        tw.classList.add("focused");
+      }
+      ghost.addEventListener("focus", () => {
+        tw.classList.add("focused");
+        document.getElementById("overlay").style.opacity = "0";
+      });
+      ghost.addEventListener("blur", () => {
+        tw.classList.remove("focused");
+        if (!S.started) document.getElementById("overlay").style.opacity = "1";
+      });
+      ghost.addEventListener("keydown", (ev) => {
+        if (ev.key === "Tab") {
+          ev.preventDefault();
+          doReset();
         }
-      }
-
-      function escapeHtml(c) {
-        if (c === "<") return "&lt;";
-        if (c === ">") return "&gt;";
-        if (c === "&") return "&amp;";
-        return c;
-      }
-
-      // ===== INPUT HANDLING =====
-      function focusInput() {
-        const input = document.getElementById("hidden-input");
-        input.focus();
-        document.getElementById("typing-container").classList.add("focused");
-      }
-
-      document.getElementById("hidden-input").addEventListener("focus", () => {
-        document.getElementById("typing-container").classList.add("focused");
-        document.getElementById("focus-hint").style.opacity = "0";
+        if (ev.key === "Escape") doReset();
+      });
+      ghost.addEventListener("input", () => {
+        if (S.done) return;
+        if (!S.started) {
+          S.started = true;
+          S.startMs = Date.now();
+          startTick();
+        }
+        const val = ghost.value,
+          prev = S.typed;
+        S.keys++;
+        if (val.length > prev.length) {
+          const ni = val.length - 1;
+          if (ni < S.text.length && val[ni] !== S.text[ni]) S.errors++;
+        }
+        S.typed = val;
+        render();
+        liveStats();
+        if (S.mode !== "time" && S.typed.length >= S.text.length) finish();
       });
 
-      document.getElementById("hidden-input").addEventListener("blur", () => {
-        document.getElementById("typing-container").classList.remove("focused");
-        if (!state.started)
-          document.getElementById("focus-hint").style.opacity = "1";
-      });
-
-      document
-        .getElementById("hidden-input")
-        .addEventListener("keydown", (e) => {
-          if (state.finished) return;
-          if (e.key === "Tab") {
-            e.preventDefault();
-            resetTyping();
-            return;
-          }
-          if (e.key === "Escape") {
-            resetTyping();
-            return;
-          }
-        });
-
-      document.getElementById("hidden-input").addEventListener("input", (e) => {
-        if (state.finished) return;
-
-        if (!state.started) {
-          state.started = true;
-          state.startTime = Date.now();
-          startTimer();
-        }
-
-        const val = e.target.value;
-        state.totalKeystrokes++;
-
-        if (val.length > 0 && val.length > state.typed.length) {
-          const newChar = val[val.length - 1];
-          const expectedChar = state.text[val.length - 1];
-          if (newChar !== expectedChar) state.errorCount++;
-        }
-
-        state.typed = val;
-        renderWords();
-        updateStats(true);
-
-        // Check completion
+      document.addEventListener("keydown", (ev) => {
+        if (!document.getElementById("sc-type").classList.contains("vis"))
+          return;
         if (
-          state.typed.length >= state.text.length &&
-          state.timerDuration === 0
-        ) {
-          // Finished the text
-          endTest();
+          ["INPUT", "TEXTAREA", "SELECT"].includes(
+            document.activeElement.tagName,
+          )
+        )
+          return;
+        if (ev.key === "Tab") {
+          ev.preventDefault();
+          doReset();
+          return;
         }
+        if (ev.key.length === 1) fg();
       });
 
-      function startTimer() {
-        if (state.timerDuration === 0) {
-          state.timerInterval = setInterval(() => {
-            state.elapsed = (Date.now() - state.startTime) / 1000;
-            updateStats(true);
-          }, 200);
-          return;
-        }
-
-        let remaining = state.timerDuration;
-        document.getElementById("stat-time").textContent = remaining + "s";
-        document.getElementById("stat-time").classList.remove("idle");
-
-        state.timerInterval = setInterval(() => {
-          state.elapsed = (Date.now() - state.startTime) / 1000;
-          remaining = Math.max(
-            0,
-            state.timerDuration - Math.floor(state.elapsed),
-          );
-          document.getElementById("stat-time").textContent = remaining + "s";
-          updateStats(true);
-          if (remaining <= 0) {
-            endTest();
+      // ── TICK ────────────────────────────────────────────────────────
+      function startTick() {
+        S.tick = setInterval(() => {
+          S.elapsed = (Date.now() - S.startMs) / 1000;
+          liveStats();
+          if (S.mode === "time") {
+            const rem = Math.max(0, S.opt - Math.floor(S.elapsed));
+            const st = document.getElementById("s-time");
+            st.textContent = rem;
+            st.classList.remove("dim");
+            if (rem <= 0) finish();
           }
-        }, 200);
+        }, 100);
       }
 
-      function updateStats(live) {
-        const wpmEl = document.getElementById("stat-wpm");
-        const accEl = document.getElementById("stat-acc");
-        const charsEl = document.getElementById("stat-chars");
-        const timeEl = document.getElementById("stat-time");
-
-        if (!live) {
-          wpmEl.textContent = "—";
-          wpmEl.classList.add("idle");
-          accEl.textContent = "—";
-          accEl.classList.add("idle");
-          charsEl.textContent = "—";
-          charsEl.classList.add("idle");
-          timeEl.textContent =
-            state.timerDuration > 0 ? state.timerDuration + "s" : "—";
-          timeEl.classList.add("idle");
-          return;
-        }
-
-        const elapsedMin = state.elapsed / 60 || 0.0001;
-        const correctChars = countCorrectChars();
-        const wpm = Math.round(correctChars / 5 / elapsedMin);
+      function liveStats() {
+        const em = S.elapsed / 60 || 1e-4;
+        const cor = cntCor();
+        const wpm = Math.round(cor / 5 / em);
         const acc =
-          state.totalKeystrokes > 0
-            ? Math.round(
-                ((state.totalKeystrokes - state.errorCount) /
-                  state.totalKeystrokes) *
-                  100,
-              )
-            : 100;
-
-        wpmEl.textContent = isFinite(wpm) ? wpm : 0;
-        wpmEl.classList.remove("idle");
-        accEl.textContent = acc + "%";
-        accEl.classList.remove("idle");
-        charsEl.textContent = state.typed.length;
-        charsEl.classList.remove("idle");
+          S.keys > 0 ? Math.round(((S.keys - S.errors) / S.keys) * 100) : 100;
+        const sw = document.getElementById("s-wpm"),
+          sa = document.getElementById("s-acc"),
+          st = document.getElementById("s-time");
+        sw.textContent = isFinite(wpm) ? wpm : 0;
+        sw.classList.remove("dim");
+        sa.textContent = acc + "%";
+        sa.classList.remove("dim");
+        if (S.mode !== "time") {
+          st.textContent = Math.round(S.elapsed) + "s";
+          st.classList.remove("dim");
+        }
       }
 
-      function countCorrectChars() {
+      function cntCor() {
         let n = 0;
-        for (
-          let i = 0;
-          i < Math.min(state.typed.length, state.text.length);
-          i++
-        ) {
-          if (state.typed[i] === state.text[i]) n++;
-        }
+        for (let i = 0; i < Math.min(S.typed.length, S.text.length); i++)
+          if (S.typed[i] === S.text[i]) n++;
         return n;
       }
 
-      function endTest() {
-        if (state.finished) return;
-        state.finished = true;
-        clearInterval(state.timerInterval);
-        state.elapsed = (Date.now() - state.startTime) / 1000;
-
-        const elapsedMin = state.elapsed / 60;
-        const correctChars = countCorrectChars();
-        const wpm = Math.round(correctChars / 5 / elapsedMin);
+      // ── FINISH ───────────────────────────────────────────────────────
+      function finish() {
+        if (S.done) return;
+        S.done = true;
+        clearInterval(S.tick);
+        S.elapsed = (Date.now() - S.startMs) / 1000;
+        const em = S.elapsed / 60,
+          cor = cntCor();
+        const wpm = Math.round(cor / 5 / em),
+          raw = Math.round(S.typed.length / 5 / em);
         const acc =
-          state.totalKeystrokes > 0
-            ? Math.round(
-                ((state.totalKeystrokes - state.errorCount) /
-                  state.totalKeystrokes) *
-                  100,
-              )
-            : 100;
-
-        document.getElementById("res-wpm").textContent = isFinite(wpm)
-          ? wpm
-          : 0;
-        document.getElementById("res-acc").textContent = acc + "%";
-        document.getElementById("res-chars").textContent = correctChars;
-        document.getElementById("res-time").textContent =
-          Math.round(state.elapsed) + "s";
-        document.getElementById("res-errors").textContent = state.errorCount;
-
-        document.getElementById("typing-words").style.display = "none";
-        document.getElementById("results-panel").classList.add("show");
+          S.keys > 0 ? Math.round(((S.keys - S.errors) / S.keys) * 100) : 100;
+        document.getElementById("r-wpm").textContent = isFinite(wpm) ? wpm : 0;
+        document.getElementById("r-raw").textContent = isFinite(raw) ? raw : 0;
+        document.getElementById("r-acc").textContent = acc + "%";
+        document.getElementById("r-chars").textContent =
+          cor + "/" + S.typed.length;
+        document.getElementById("r-time").textContent =
+          Math.round(S.elapsed) + "s";
+        document.getElementById("words").style.visibility = "hidden";
+        document.querySelector(".lstats").style.visibility = "hidden";
+        document.getElementById("results").classList.add("show");
       }
 
-      function resetTyping() {
-        clearInterval(state.timerInterval);
-        document.getElementById("hidden-input").value = "";
+      function doReset() {
+        clearInterval(S.tick);
+        ghost.value = "";
         initTyping();
-        setTimeout(focusInput, 50);
+        setTimeout(fg, 60);
+      }
+      function doNew() {
+        clearInterval(S.tick);
+        ghost.value = "";
+        S.text = genText();
+        S.typed = "";
+        S.started = false;
+        S.done = false;
+        S.startMs = null;
+        S.elapsed = 0;
+        S.keys = 0;
+        S.errors = 0;
+        document.getElementById("results").classList.remove("show");
+        document.getElementById("words").style.visibility = "visible";
+        document.querySelector(".lstats").style.visibility = "visible";
+        dimStats();
+        render();
+        setTimeout(fg, 60);
       }
 
-      function newText() {
-        state.typed = "";
-        clearInterval(state.timerInterval);
-        document.getElementById("hidden-input").value = "";
-        state.text = getRandomText();
-        state.started = false;
-        state.finished = false;
-        state.startTime = null;
-        state.elapsed = 0;
-        state.totalKeystrokes = 0;
-        state.errorCount = 0;
-        document.getElementById("results-panel").classList.remove("show");
-        document.getElementById("typing-words").style.display = "block";
-        updateStats(false);
-        renderWords();
-        setTimeout(focusInput, 50);
-      }
-
-      // ===== MODE & TIMER =====
-      function setMode(mode, btn) {
-        state.mode = mode;
-        document
-          .querySelectorAll(
-            ".typing-toolbar .toolbar-left:first-child .pill-btn",
-          )
-          .forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-        if (mode === "custom" && !state.customText) {
-          showToast('Add custom text in the "+ Text" tab first');
-        }
-        newText();
-      }
-
-      function setTimer(t, btn) {
-        state.timerDuration = t;
-        document
-          .querySelectorAll(
-            ".typing-toolbar .toolbar-left:last-child .pill-btn",
-          )
-          .forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-        resetTyping();
-      }
-
-      // ===== READ MODE =====
-      function updateSpeed() {
-        const val = document.getElementById("speed-slider").value;
-        readState.speed = parseInt(val);
-        document.getElementById("speed-val").textContent = val + " WPM";
-        if (readState.playing) {
-          clearInterval(readState.interval);
-          startReadInterval();
-        }
-      }
-
-      function initReadText(text) {
-        stopRead();
-        readState.words = text.split(/\s+/).filter((w) => w.length > 0);
-        readState.index = 0;
-        renderReadText();
-        document.getElementById("read-progress-bar").style.width = "0%";
-      }
-
-      function renderReadText() {
-        const container = document.getElementById("read-text");
-        container.innerHTML = readState.words
-          .map((w, i) => {
-            let cls = "read-word";
-            if (i < readState.index) cls += " passed";
-            if (i === readState.index) cls += " highlight-word";
-            return `<span class="${cls}" id="rw-${i}">${escapeHtml(w)} </span>`;
-          })
-          .join("");
-      }
-
-      function toggleRead() {
-        if (readState.playing) {
-          pauseRead();
-        } else {
-          playRead();
-        }
-      }
-
-      function playRead() {
-        if (readState.words.length === 0) {
-          showToast('Load text from the "+ Text" tab first');
-          return;
-        }
-        readState.playing = true;
-        document.getElementById("read-play-btn").textContent = "⏸ Pause";
-        startReadInterval();
-      }
-
-      function startReadInterval() {
-        const msPerWord = (60 / readState.speed) * 1000;
-        readState.interval = setInterval(() => {
-          if (readState.index >= readState.words.length) {
-            stopRead();
-            return;
-          }
-          highlightReadWord(readState.index);
-          readState.index++;
-          const pct = (readState.index / readState.words.length) * 100;
-          document.getElementById("read-progress-bar").style.width = pct + "%";
-        }, msPerWord);
-      }
-
-      function highlightReadWord(idx) {
-        const all = document.querySelectorAll(".read-word");
-        all.forEach((el, i) => {
-          el.className = "read-word";
-          if (i < idx) el.classList.add("passed");
-          if (i === idx) el.classList.add("highlight-word");
+      // ── BOOKS ───────────────────────────────────────────────────────
+      function buildBooks() {
+        const g = document.getElementById("bgrid");
+        BOOKS.forEach((b) => {
+          const d = document.createElement("div");
+          d.className = "bcard";
+          d.innerHTML = `<div class="bct">${b.t}</div><div class="bca">${b.a}</div>`;
+          d.onclick = () => {
+            document
+              .querySelectorAll(".bcard")
+              .forEach((c) => c.classList.remove("sel"));
+            d.classList.add("sel");
+            document.getElementById("cta").value = QUOTES[b.i];
+            onTA();
+          };
+          g.appendChild(d);
         });
-        const el = document.getElementById("rw-" + idx);
-        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
       }
 
-      function pauseRead() {
-        readState.playing = false;
-        clearInterval(readState.interval);
-        document.getElementById("read-play-btn").textContent = "▶ Play";
-      }
-
-      function stopRead() {
-        pauseRead();
-        readState.index = 0;
-        renderReadText();
-        document.getElementById("read-progress-bar").style.width = "0%";
-      }
-
-      // ===== TEXT INPUT =====
-      function updateCharCount() {
-        const val = document.getElementById("custom-text").value;
-        document.getElementById("char-count").textContent =
-          val.length + " chars";
+      function onTA() {
+        const v = document.getElementById("cta").value;
+        const wc = v.trim().split(/\s+/).filter(Boolean).length;
+        document.getElementById("cc").textContent =
+          v.length + " chars · " + wc + " words";
       }
 
       function applyText(dest) {
-        const customVal = document.getElementById("custom-text").value.trim();
-        const text = customVal || state.text;
-
-        if (!customVal) {
-          showToast("Please enter or paste some text first");
+        const txt = document.getElementById("cta").value.trim();
+        if (!txt) {
+          toast("Add text first");
           return;
         }
-
         if (dest === "type") {
-          state.customText = text;
-          state.mode = "custom";
-          document.getElementById("hidden-input").value = "";
-          state.text = text;
-          state.typed = "";
-          state.started = false;
-          state.finished = false;
-          state.startTime = null;
-          state.elapsed = 0;
-          state.totalKeystrokes = 0;
-          state.errorCount = 0;
-          clearInterval(state.timerInterval);
-          document.getElementById("results-panel").classList.remove("show");
-          document.getElementById("typing-words").style.display = "block";
-          updateStats(false);
-          renderWords();
-          switchPanel("type");
-          setTimeout(focusInput, 100);
-          showToast("Text loaded! Start typing.");
+          S.custom = txt;
+          S.mode = "custom";
+          document
+            .querySelectorAll("[data-m]")
+            .forEach((b) => b.classList.remove("on"));
+          document.querySelector("[data-m=custom]").classList.add("on");
+          document.getElementById("topts").style.display = "none";
+          document.getElementById("wopts").style.display = "none";
+          clearInterval(S.tick);
+          ghost.value = "";
+          S.text = txt;
+          S.typed = "";
+          S.started = false;
+          S.done = false;
+          S.startMs = null;
+          S.elapsed = 0;
+          S.keys = 0;
+          S.errors = 0;
+          document.getElementById("results").classList.remove("show");
+          document.getElementById("words").style.visibility = "visible";
+          document.querySelector(".lstats").style.visibility = "visible";
+          dimStats();
+          render();
+          showSc("type", document.querySelector("[data-sc=type]"));
+          setTimeout(fg, 100);
+          toast("Loaded! Start typing.");
         } else {
-          initReadText(text);
-          switchPanel("read");
-          showToast("Text loaded for reading!");
+          loadReadTxt(txt);
+          showSc("read", document.querySelector("[data-sc=read]"));
+          toast("Loaded for reading!");
         }
       }
 
-      // ===== PDF HANDLING =====
-      async function handlePdfUpload(e) {
-        const file = e.target.files[0];
-        if (!file) return;
+      // ── PDF ─────────────────────────────────────────────────────────
+      let pdfPages = [],
+        selPages = new Set();
 
-        document.getElementById("pdf-filename").textContent = file.name;
-        document.getElementById("pdf-meta").textContent = "Extracting text...";
-        document.getElementById("pdf-info").style.display = "block";
-
-        if (!window.pdfjsLib) {
-          showToast("PDF.js not loaded. Try refreshing.");
+      async function loadPDF(file) {
+        if (!file || !window.pdfjsLib) {
+          toast("PDF.js not available");
           return;
         }
+        pdfPages = [];
+        selPages = new Set();
+        document.getElementById("pstat").style.display = "block";
+        document.getElementById("pnm").textContent = file.name;
+        document.getElementById("pmt").textContent = "Reading...";
+        document.getElementById("pchips").innerHTML = "";
+        document.getElementById("pbar").style.width = "0%";
+        document.getElementById("prlbl").textContent = "Starting...";
+        document.getElementById("prwrap").style.display = "block";
 
         try {
-          const arrayBuffer = await file.arrayBuffer();
-          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-          const numPages = pdf.numPages;
-          document.getElementById("pdf-meta").textContent = `${numPages} pages`;
+          const buf = await file.arrayBuffer();
+          const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+          const n = pdf.numPages;
+          document.getElementById("pmt").textContent = n + " pages";
 
-          const pagesContainer = document.getElementById("pdf-pages");
-          pagesContainer.innerHTML = "";
-
-          // Extract all pages
-          const pageTexts = [];
-          for (let i = 1; i <= numPages; i++) {
-            const page = await pdf.getPage(i);
-            const content = await page.getTextContent();
-            const text = content.items
-              .map((item) => item.str)
-              .join(" ")
-              .replace(/\s+/g, " ")
-              .trim();
-            pageTexts.push(text);
-
-            const btn = document.createElement("button");
-            btn.className = "pdf-page-btn";
-            btn.textContent = i;
-            btn.onclick = () => {
-              document
-                .querySelectorAll(".pdf-page-btn")
-                .forEach((b) => b.classList.remove("selected"));
-              btn.classList.add("selected");
-              document.getElementById("custom-text").value = pageTexts[i - 1];
-              updateCharCount();
-            };
-            pagesContainer.appendChild(btn);
+          // Extract each page asynchronously, yielding control between pages
+          for (let i = 1; i <= n; i++) {
+            try {
+              const pg = await pdf.getPage(i);
+              const cnt = await pg.getTextContent();
+              pdfPages[i - 1] =
+                cnt.items
+                  .map((x) => x.str)
+                  .join(" ")
+                  .replace(/\s+/g, " ")
+                  .trim() || "[empty page]";
+            } catch (e) {
+              pdfPages[i - 1] = "[error page " + i + "]";
+            }
+            document.getElementById("pbar").style.width =
+              Math.round((i / n) * 100) + "%";
+            document.getElementById("prlbl").textContent =
+              "Page " + i + " of " + n;
+            // Yield to browser every page to avoid UI freeze
+            await new Promise((r) => setTimeout(r, 0));
           }
 
-          // Load all text by default
-          const allText = pageTexts.join("\n\n");
-          document.getElementById("custom-text").value = allText;
-          updateCharCount();
-          showToast(`PDF loaded! ${numPages} pages extracted.`);
+          document.getElementById("prwrap").style.display = "none";
+          buildPgChips(n);
+          // select all by default
+          for (let i = 0; i < n; i++) selPages.add(i);
+          document
+            .querySelectorAll(".pgchip:not(.all-chip)")
+            .forEach((c) => c.classList.add("sel"));
+          buildCombo();
+          toast("PDF loaded — " + n + " pages");
         } catch (err) {
-          document.getElementById("pdf-meta").textContent = "Error reading PDF";
-          showToast("Could not read PDF. Make sure it has selectable text.");
-          console.error(err);
+          document.getElementById("pmt").textContent = "Error: " + err.message;
+          toast("Could not read PDF");
         }
       }
 
-      // Drag & drop
-      const dropZone = document.getElementById("pdf-drop");
-      dropZone.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        dropZone.classList.add("drag-over");
-      });
-      dropZone.addEventListener("dragleave", () =>
-        dropZone.classList.remove("drag-over"),
-      );
-      dropZone.addEventListener("drop", (e) => {
-        e.preventDefault();
-        dropZone.classList.remove("drag-over");
-        const file = e.dataTransfer.files[0];
-        if (file && file.type === "application/pdf") {
-          handlePdfUpload({ target: { files: [file] } });
+      function buildPgChips(n) {
+        const cont = document.getElementById("pchips");
+        cont.innerHTML = "";
+        const all = document.createElement("button");
+        all.className = "pgchip all-chip sel";
+        all.id = "chall";
+        all.textContent = "All";
+        all.onclick = () => {
+          selAll(n);
+        };
+        cont.appendChild(all);
+        for (let i = 1; i <= n; i++) {
+          const c = document.createElement("button");
+          c.className = "pgchip";
+          c.textContent = i;
+          c.dataset.pi = i - 1;
+          c.onclick = () => togPg(i - 1, c, n);
+          cont.appendChild(c);
         }
+      }
+
+      function selAll(n) {
+        selPages = new Set();
+        for (let i = 0; i < n; i++) selPages.add(i);
+        document
+          .querySelectorAll(".pgchip:not(.all-chip)")
+          .forEach((c) => c.classList.add("sel"));
+        document.getElementById("chall").classList.add("sel");
+        buildCombo();
+      }
+      function togPg(idx, chip, n) {
+        document.getElementById("chall").classList.remove("sel");
+        if (selPages.has(idx)) {
+          selPages.delete(idx);
+          chip.classList.remove("sel");
+        } else {
+          selPages.add(idx);
+          chip.classList.add("sel");
+        }
+        buildCombo();
+      }
+      function buildCombo() {
+        const txt = [...selPages]
+          .sort((a, b) => a - b)
+          .map((i) => pdfPages[i])
+          .join("\n\n");
+        document.getElementById("cta").value = txt;
+        onTA();
+      }
+
+      // drag-drop
+      const pz = document.getElementById("pzone");
+      pz.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        pz.classList.add("drag");
+      });
+      pz.addEventListener("dragleave", () => pz.classList.remove("drag"));
+      pz.addEventListener("drop", (e) => {
+        e.preventDefault();
+        pz.classList.remove("drag");
+        const f = e.dataTransfer.files[0];
+        if (f && f.type === "application/pdf") loadPDF(f);
       });
 
-      // ===== TOAST =====
-      function showToast(msg) {
+      // ── READ MODE ────────────────────────────────────────────────────
+      let rWords = [],
+        rIdx = 0,
+        rInt = null,
+        rPlay = false,
+        rSpd = 200;
+
+      function loadReadTxt(txt) {
+        stopPlay();
+        rWords = txt.split(/\s+/).filter(Boolean);
+        rIdx = 0;
+        renderRead();
+        document.getElementById("rpbar").style.width = "0%";
+      }
+
+      function renderRead() {
+        const el = document.getElementById("rcont");
+        if (!rWords.length) {
+          el.innerHTML =
+            '<span style="color:var(--sub2)">No text loaded.</span>';
+          return;
+        }
+        el.innerHTML = rWords
+          .map((w, i) => `<span class="rw" id="rw${i}">${esc2(w)} </span>`)
+          .join("");
+      }
+      function esc2(s) {
+        return s
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      function togPlay() {
+        if (rPlay) pausePlay();
+        else startPlay();
+      }
+      function startPlay() {
+        if (!rWords.length) {
+          toast("Load text first");
+          return;
+        }
+        rPlay = true;
+        document.getElementById("playbtn").textContent = "⏸ pause";
+        const ms = (60 / rSpd) * 1000;
+        rInt = setInterval(stepRead, ms);
+      }
+      function pausePlay() {
+        rPlay = false;
+        clearInterval(rInt);
+        document.getElementById("playbtn").textContent = "▶ play";
+      }
+      function stopPlay() {
+        pausePlay();
+        rIdx = 0;
+        renderRead();
+        document.getElementById("rpbar").style.width = "0%";
+      }
+      function stepRead() {
+        if (rIdx >= rWords.length) {
+          stopPlay();
+          return;
+        }
+        const prev = document.getElementById("rw" + (rIdx - 1));
+        if (prev) {
+          prev.classList.remove("active");
+          prev.classList.add("done");
+        }
+        const cur = document.getElementById("rw" + rIdx);
+        if (cur) {
+          cur.classList.add("active");
+          cur.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        rIdx++;
+        document.getElementById("rpbar").style.width =
+          (rIdx / rWords.length) * 100 + "%";
+      }
+      function updRSpd() {
+        rSpd = parseInt(document.getElementById("rspd").value);
+        document.getElementById("rspd-v").textContent = rSpd + " wpm";
+        if (rPlay) {
+          pausePlay();
+          startPlay();
+        }
+      }
+
+      // ── TTS ──────────────────────────────────────────────────────────
+      let ttsOn = false,
+        ttsUtt = null;
+
+      function loadVoices() {
+        const sel = document.getElementById("vsel");
+        const voices = window.speechSynthesis
+          ? speechSynthesis.getVoices()
+          : [];
+        if (!voices.length) return;
+        sel.innerHTML = "";
+        const en = voices.filter((v) => v.lang.startsWith("en"));
+        const rest = voices.filter((v) => !v.lang.startsWith("en"));
+        [...en, ...rest].forEach((v) => {
+          const o = document.createElement("option");
+          o.value = v.name;
+          o.textContent = v.name + " (" + v.lang + ")";
+          sel.appendChild(o);
+        });
+      }
+      if (window.speechSynthesis) {
+        speechSynthesis.onvoiceschanged = loadVoices;
+        setTimeout(loadVoices, 300);
+      }
+
+      function togTTS() {
+        if (ttsOn) stopTTS();
+        else startTTS();
+      }
+
+      function startTTS() {
+        if (!window.speechSynthesis) {
+          toast("Speech not supported in this browser");
+          return;
+        }
+        const txt = rWords.length ? rWords.join(" ") : "";
+        if (!txt) {
+          toast("Load text first");
+          return;
+        }
+        stopTTS();
+        ttsUtt = new SpeechSynthesisUtterance(txt);
+        ttsUtt.rate = parseFloat(document.getElementById("ttsrate").value);
+        ttsUtt.pitch = 1;
+        ttsUtt.volume = 1;
+        const sv = document.getElementById("vsel").value;
+        if (sv) {
+          const v = speechSynthesis.getVoices().find((x) => x.name === sv);
+          if (v) ttsUtt.voice = v;
+        }
+        ttsUtt.onstart = () => {
+          ttsOn = true;
+          const b = document.getElementById("ttsbtn");
+          b.textContent = "⏸ pause";
+          b.classList.add("spk");
+        };
+        ttsUtt.onend = ttsUtt.onerror = cleanTTS;
+        ttsUtt.onboundary = (ev) => {
+          if (ev.name !== "word") return;
+          const sub = txt.slice(0, ev.charIndex);
+          const wi = sub.split(/\s+/).filter(Boolean).length;
+          highlightTTS(wi);
+        };
+        speechSynthesis.speak(ttsUtt);
+      }
+      function highlightTTS(wi) {
+        document.querySelectorAll(".rw").forEach((el, i) => {
+          el.classList.remove("active");
+          if (i < wi) el.classList.add("done");
+        });
+        const cur = document.getElementById("rw" + wi);
+        if (cur) {
+          cur.classList.add("active");
+          cur.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }
+      function stopTTS() {
+        if (window.speechSynthesis) speechSynthesis.cancel();
+        cleanTTS();
+      }
+      function cleanTTS() {
+        ttsOn = false;
+        const b = document.getElementById("ttsbtn");
+        b.textContent = "▶ read aloud";
+        b.classList.remove("spk");
+      }
+
+      // ── TOAST ─────────────────────────────────────────────────────────
+      let toastTm = null;
+      function toast(m) {
         const el = document.getElementById("toast");
-        el.textContent = msg;
+        el.textContent = m;
         el.classList.add("show");
-        setTimeout(() => el.classList.remove("show"), 2500);
+        clearTimeout(toastTm);
+        toastTm = setTimeout(() => el.classList.remove("show"), 2500);
       }
 
-      // ===== INIT =====
-      buildBookCards();
+      // ── INIT ──────────────────────────────────────────────────────────
+      buildBooks();
       initTyping();
-
-      // Keyboard shortcut: Tab to restart
-      document.addEventListener("keydown", (e) => {
-        if (
-          e.key === "Tab" &&
-          document.getElementById("panel-type").classList.contains("active")
-        ) {
-          e.preventDefault();
-          resetTyping();
-        }
-      });
     </script>
   </body>
 </html>
