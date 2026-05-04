@@ -6,27 +6,26 @@
     <title>TypeCraft</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <link
-      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500&display=swap"
       rel="stylesheet"
     />
     <style>
+      /* ── SUPERUSER EXACT PALETTE ─────────────────────────────────── */
       :root {
-        --bg: #0e0f14;
-        --surface: #14151c;
-        --surface2: #1c1d27;
-        --border: #21222e;
-        --accent: #00b4d8;
-        --accent2: #0096c7;
-        --sub: #5c6075;
-        --sub2: #3a3d52;
-        --text: #cdd6f4;
-        --correct: #cdd6f4;
-        --wrong: #f38ba8;
-        --wrong-bg: rgba(243, 139, 168, 0.12);
-        --extra: #f38ba8;
-        --cursor: #00b4d8;
+        --bg: #2b2b3b;
+        --surface: #323244;
+        --surface2: #3a3a4e;
+        --border: #3d3d54;
+        --accent: #88c0d0; /* superuser teal */
+        --accent2: #6aaabb;
+        --sub: #504f6e; /* untyped words */
+        --sub2: #3d3c57; /* dimmer */
+        --text: #d8dee9; /* correct typed */
+        --wrong: #bf616a;
+        --wrong-bg: rgba(191, 97, 106, 0.15);
+        --cursor: #88c0d0;
         --mono: "Roboto Mono", monospace;
-        --r: 8px;
+        --r: 6px;
       }
       *,
       *::before,
@@ -48,88 +47,93 @@
         flex-direction: column;
       }
 
-      /* HEADER */
+      /* ── HEADER ─────────────────────────────────────────────────── */
       #hdr {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0 2.5rem;
-        height: 60px;
-        border-bottom: 1px solid var(--border);
+        padding: 0 3rem;
+        height: 56px;
         flex-shrink: 0;
       }
       .logo {
-        color: var(--accent);
-        font-size: 1.1rem;
-        font-weight: 500;
-        letter-spacing: 0.05em;
         display: flex;
         align-items: center;
-        gap: 0.45rem;
+        gap: 0.5rem;
+        color: var(--accent);
+        font-size: 1rem;
+        font-weight: 500;
+        letter-spacing: 0.04em;
       }
       .logo svg {
-        width: 18px;
-        height: 18px;
+        width: 20px;
+        height: 20px;
         fill: var(--accent);
       }
       .nav {
         display: flex;
-        gap: 0.1rem;
+        gap: 0;
       }
       .nv {
         background: none;
         border: none;
         color: var(--sub);
         font-family: var(--mono);
-        font-size: 0.8rem;
-        padding: 0.4rem 0.9rem;
+        font-size: 0.78rem;
+        letter-spacing: 0.06em;
+        padding: 0.35rem 0.8rem;
         border-radius: var(--r);
         cursor: pointer;
         transition:
           color 0.15s,
           background 0.15s;
-        letter-spacing: 0.05em;
       }
       .nv:hover {
         color: var(--text);
-        background: var(--surface2);
+        background: var(--surface);
       }
       .nv.on {
         color: var(--accent);
       }
 
-      /* MAIN */
+      /* ── APP CONTAINER ──────────────────────────────────────────── */
       #app {
         flex: 1;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 2rem 1.5rem 3rem;
+        padding: 0 3rem 4rem;
       }
       .sc {
         display: none;
         width: 100%;
-        max-width: 860px;
+        max-width: 1000px;
       }
       .sc.vis {
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
       }
 
-      /* TOOLBAR */
+      /* ── TYPE SCREEN ─────────────────────────────────────────────── */
+      #sc-type {
+        gap: 0;
+      }
+
+      /* toolbar — centered like MonkeyType */
       .toolbar {
         display: flex;
         align-items: center;
-        gap: 0.4rem;
+        justify-content: center;
+        gap: 0;
+        margin-bottom: 3rem;
         flex-wrap: wrap;
       }
       .sep {
         width: 1px;
-        height: 18px;
+        height: 16px;
         background: var(--border);
-        margin: 0 0.25rem;
+        margin: 0 0.5rem;
       }
       .chip {
         background: none;
@@ -137,24 +141,37 @@
         color: var(--sub);
         font-family: var(--mono);
         font-size: 0.78rem;
-        padding: 0.28rem 0.65rem;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: all 0.12s;
         letter-spacing: 0.04em;
+        padding: 0.3rem 0.7rem;
+        border-radius: var(--r);
+        cursor: pointer;
+        transition:
+          color 0.12s,
+          background 0.12s;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
       }
       .chip:hover {
         color: var(--text);
-        background: var(--surface2);
+        background: var(--surface);
       }
       .chip.on {
         color: var(--accent);
       }
+      .chip svg {
+        width: 12px;
+        height: 12px;
+        fill: currentColor;
+      }
 
-      /* LIVE STATS */
+      /* live stats — tight, left-aligned above words */
       .lstats {
         display: flex;
-        gap: 2.5rem;
+        gap: 2rem;
+        margin-bottom: 0.6rem;
+        padding-left: 2px;
+        min-height: 3rem;
       }
       .ls {
         display: flex;
@@ -162,58 +179,69 @@
         line-height: 1;
       }
       .lv {
-        font-size: 2rem;
+        font-size: 1.8rem;
         font-weight: 300;
         color: var(--accent);
         letter-spacing: -0.02em;
-        min-width: 3ch;
       }
       .lv.dim {
         color: var(--sub2);
       }
       .ll {
-        font-size: 0.62rem;
+        font-size: 0.58rem;
         color: var(--sub);
-        letter-spacing: 0.12em;
+        letter-spacing: 0.14em;
         margin-top: 0.2rem;
         text-transform: uppercase;
       }
 
-      /* TYPING */
+      /* typing area */
       .twrap {
         position: relative;
         cursor: text;
+        margin-bottom: 1.5rem;
       }
+
+      /* ── WORDS — exactly match MonkeyType style ─────────────────── */
       .words {
-        font-size: 1.35rem;
-        line-height: 2.6rem;
+        font-family: var(--mono);
+        font-size: 1.5rem; /* MonkeyType's size */
+        line-height: 2.4rem;
         color: var(--sub);
-        height: 7.8rem;
+        height: 7.2rem; /* 3 lines exactly */
         overflow: hidden;
         user-select: none;
-        letter-spacing: 0.03em;
-        word-spacing: 0.12em;
+        word-spacing: 0; /* NO extra word gap */
+        letter-spacing: 0; /* NO extra letter gap */
       }
+
+      /* each word is inline-block, with right margin = the space char visual */
       .word {
         display: inline-block;
-        margin-right: 0.55rem;
+        margin-right: 0.6ch; /* matches natural space width in mono */
         position: relative;
       }
-      .word.ewrd::after {
+      .word.ewrd {
+        /* word with error underline */
+      }
+      .word.ewrd > .sp-ch::after {
         content: "";
         position: absolute;
-        bottom: 2px;
-        left: 0;
+        bottom: 3px;
+        left: -110%;
         right: 0;
         height: 2px;
         background: var(--wrong);
-        border-radius: 2px;
+        border-radius: 1px;
       }
+
+      /* character spans */
       .ch {
         position: relative;
+        display: inline;
       }
       .ch.correct {
-        color: var(--correct);
+        color: var(--text);
       }
       .ch.wrong {
         color: var(--wrong);
@@ -221,22 +249,24 @@
         border-radius: 2px;
       }
       .ch.extra {
-        color: var(--extra);
+        color: var(--wrong);
         text-decoration: underline;
         text-decoration-color: var(--wrong);
       }
+
+      /* blinking caret */
       .ch.cursor::before {
         content: "";
         position: absolute;
         left: -1px;
-        top: 4px;
+        top: 3px;
         width: 2px;
-        height: 1.9rem;
+        height: 1.8rem;
         background: var(--cursor);
         border-radius: 1px;
         animation: blink 1s step-end infinite;
       }
-      .ch.cursor.typed::before {
+      .ch.cursor.after::before {
         left: auto;
         right: -2px;
       }
@@ -249,30 +279,33 @@
           opacity: 0;
         }
       }
+
+      /* focus overlay */
       .overlay {
         position: absolute;
         inset: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(14, 15, 20, 0.85);
+        background: rgba(43, 43, 59, 0.9);
         border-radius: var(--r);
-        backdrop-filter: blur(3px);
+        backdrop-filter: blur(4px);
         color: var(--sub);
-        font-size: 0.82rem;
-        letter-spacing: 0.1em;
+        font-size: 0.8rem;
+        letter-spacing: 0.12em;
         transition: opacity 0.2s;
         pointer-events: none;
       }
       .twrap.focused .overlay {
         opacity: 0;
       }
+
+      /* ghost input */
       #ghost {
         position: absolute;
         opacity: 0;
         inset: 0;
         z-index: 5;
-        cursor: text;
         border: none;
         outline: none;
         background: transparent;
@@ -280,43 +313,69 @@
         caret-color: transparent;
         font-size: 1px;
         resize: none;
+        cursor: text;
       }
 
-      /* CONTROLS */
-      .brow {
+      /* restart row */
+      .btns {
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 1.5rem;
+        margin-top: 0.5rem;
       }
       .cbtn {
         background: none;
         border: none;
         color: var(--sub);
         font-family: var(--mono);
-        font-size: 0.8rem;
-        padding: 0.4rem 0.7rem;
+        font-size: 0.75rem;
+        letter-spacing: 0.04em;
+        padding: 0.35rem 0.7rem;
         border-radius: var(--r);
         cursor: pointer;
-        transition:
-          color 0.12s,
-          background 0.12s;
         display: flex;
         align-items: center;
         gap: 0.4rem;
+        transition:
+          color 0.12s,
+          background 0.12s;
       }
       .cbtn:hover {
         color: var(--accent);
-        background: var(--surface2);
+        background: var(--surface);
+      }
+      .cbtn svg {
+        width: 13px;
+        height: 13px;
+        fill: currentColor;
       }
 
-      /* RESULTS */
+      /* hint line */
+      .hint-line {
+        text-align: center;
+        margin-top: 1.8rem;
+        font-size: 0.72rem;
+        color: var(--sub2);
+        letter-spacing: 0.06em;
+      }
+      .hint-line kbd {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        color: var(--sub);
+        border-radius: 4px;
+        padding: 0.1rem 0.4rem;
+        font-family: var(--mono);
+        font-size: 0.7rem;
+      }
+
+      /* ── RESULTS ─────────────────────────────────────────────────── */
       #results {
         display: none;
         flex-direction: column;
-        align-items: center;
-        gap: 2.5rem;
-        padding: 3rem 0;
+        align-items: flex-start;
+        gap: 2rem;
+        padding: 2rem 0;
         animation: fadeUp 0.3s ease;
       }
       #results.show {
@@ -325,99 +384,110 @@
       @keyframes fadeUp {
         from {
           opacity: 0;
-          transform: translateY(12px);
+          transform: translateY(10px);
         }
         to {
           opacity: 1;
           transform: translateY(0);
         }
       }
-      .rmain {
+
+      .res-row {
         display: flex;
         align-items: flex-end;
-        gap: 3rem;
+        gap: 4rem;
       }
-      .rbig {
-        text-align: center;
+      .res-main {
+        display: flex;
+        flex-direction: column;
       }
-      .rbigv {
+      .res-lbl {
+        font-size: 0.6rem;
+        color: var(--sub);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        margin-bottom: 0.2rem;
+      }
+      .res-wpm {
         font-size: 6rem;
         font-weight: 300;
         color: var(--accent);
         line-height: 1;
+        letter-spacing: -0.03em;
       }
-      .rbigl {
-        font-size: 0.7rem;
-        color: var(--sub);
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-        margin-top: 0.4rem;
-      }
-      .rstats {
+      .res-sub {
         display: flex;
         flex-direction: column;
-        gap: 0.6rem;
-        margin-bottom: 0.6rem;
+        gap: 0.55rem;
+        margin-bottom: 0.5rem;
       }
       .rs {
         display: flex;
         align-items: baseline;
-        gap: 0.7rem;
+        gap: 0.6rem;
       }
-      .rsv {
-        font-size: 1.6rem;
+      .rs-v {
+        font-size: 1.8rem;
         font-weight: 300;
         color: var(--text);
         min-width: 4ch;
       }
-      .rsl {
-        font-size: 0.65rem;
+      .rs-l {
+        font-size: 0.6rem;
         color: var(--sub);
-        letter-spacing: 0.1em;
+        letter-spacing: 0.12em;
         text-transform: uppercase;
-      }
-      .retrybtn {
-        background: var(--accent);
-        color: var(--bg);
-        border: none;
-        border-radius: var(--r);
-        padding: 0.7rem 2.5rem;
-        font-family: var(--mono);
-        font-size: 0.82rem;
-        font-weight: 500;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        cursor: pointer;
-        transition: all 0.15s;
-      }
-      .retrybtn:hover {
-        background: var(--accent2);
-        transform: translateY(-1px);
       }
 
-      /* TEXT TAB */
-      .ttab {
+      .retry-btn {
+        background: none;
+        border: none;
+        color: var(--sub);
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        letter-spacing: 0.06em;
+        padding: 0.4rem 0.8rem;
+        border-radius: var(--r);
+        cursor: pointer;
+        transition:
+          color 0.12s,
+          background 0.12s;
         display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
+        align-items: center;
+        gap: 0.5rem;
       }
-      .shd {
-        font-size: 0.65rem;
-        letter-spacing: 0.15em;
+      .retry-btn:hover {
+        color: var(--accent);
+        background: var(--surface);
+      }
+      .retry-btn svg {
+        width: 14px;
+        height: 14px;
+        fill: currentColor;
+      }
+
+      /* ── TEXT SCREEN ─────────────────────────────────────────────── */
+      #sc-text {
+        gap: 1.5rem;
+        padding-top: 1rem;
+      }
+      .section-hd {
+        font-size: 0.62rem;
+        letter-spacing: 0.16em;
         text-transform: uppercase;
         color: var(--sub);
-        margin-bottom: 0.6rem;
+        margin-bottom: 0.65rem;
       }
       .bgrid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
-        gap: 0.6rem;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 0.5rem;
       }
       .bcard {
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: var(--r);
-        padding: 0.75rem 1rem;
+        padding: 0.7rem 0.9rem;
         cursor: pointer;
         transition: all 0.12s;
       }
@@ -428,15 +498,16 @@
         border-color: var(--accent);
         background: var(--surface2);
       }
-      .bct {
-        font-size: 0.82rem;
+      .bt {
+        font-size: 0.8rem;
         color: var(--text);
-        margin-bottom: 0.15rem;
+        margin-bottom: 0.12rem;
       }
-      .bca {
-        font-size: 0.7rem;
+      .ba {
+        font-size: 0.68rem;
         color: var(--sub);
       }
+
       .tbox {
         background: var(--surface);
         border: 1px solid var(--border);
@@ -447,23 +518,22 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0.6rem 1rem;
+        padding: 0.55rem 0.9rem;
         border-bottom: 1px solid var(--border);
-        font-size: 0.7rem;
+        font-size: 0.68rem;
         color: var(--sub);
-        letter-spacing: 0.06em;
       }
       #cta {
         width: 100%;
-        min-height: 160px;
+        min-height: 150px;
         background: transparent;
         border: none;
         outline: none;
         color: var(--text);
         font-family: var(--mono);
-        font-size: 0.88rem;
-        line-height: 1.75;
-        padding: 1rem;
+        font-size: 0.85rem;
+        line-height: 1.7;
+        padding: 0.9rem;
         resize: vertical;
       }
       #cta::placeholder {
@@ -474,7 +544,7 @@
       .pzone {
         border: 2px dashed var(--border);
         border-radius: var(--r);
-        padding: 2.5rem;
+        padding: 2rem;
         text-align: center;
         cursor: pointer;
         transition: all 0.15s;
@@ -483,7 +553,7 @@
       .pzone:hover,
       .pzone.drag {
         border-color: var(--accent2);
-        background: rgba(0, 180, 216, 0.03);
+        background: rgba(136, 192, 208, 0.04);
       }
       .pzone input {
         position: absolute;
@@ -492,11 +562,11 @@
         cursor: pointer;
       }
       .pico {
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
+        font-size: 1.8rem;
+        margin-bottom: 0.4rem;
       }
       .pztxt {
-        font-size: 0.82rem;
+        font-size: 0.8rem;
         color: var(--sub);
       }
       .pztxt strong {
@@ -506,40 +576,34 @@
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: var(--r);
-        padding: 0.75rem 1rem;
+        padding: 0.8rem 1rem;
         display: none;
       }
-      .prow {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 1rem;
-      }
       .pnm {
-        font-size: 0.82rem;
+        font-size: 0.8rem;
         color: var(--text);
       }
       .pmt {
-        font-size: 0.7rem;
+        font-size: 0.68rem;
         color: var(--sub);
-        margin-top: 0.15rem;
+        margin-top: 0.1rem;
       }
       .pchips {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.4rem;
-        margin-top: 0.75rem;
+        gap: 0.35rem;
+        margin-top: 0.65rem;
       }
       .pgchip {
         background: var(--surface2);
         border: 1px solid var(--border);
         color: var(--sub);
         border-radius: 4px;
-        padding: 0.2rem 0.5rem;
-        font-size: 0.72rem;
+        padding: 0.18rem 0.45rem;
+        font-size: 0.7rem;
+        font-family: var(--mono);
         cursor: pointer;
         transition: all 0.1s;
-        font-family: var(--mono);
       }
       .pgchip:hover {
         color: var(--accent);
@@ -548,43 +612,44 @@
       .pgchip.sel {
         color: var(--accent);
         border-color: var(--accent);
-        background: rgba(0, 180, 216, 0.08);
+        background: rgba(136, 192, 208, 0.08);
       }
       .pgchip.all-chip {
         color: var(--text);
         border-color: var(--sub2);
       }
       .prwrap {
-        margin-top: 0.75rem;
+        margin-top: 0.6rem;
       }
       .prbg {
         background: var(--surface2);
-        border-radius: 4px;
-        height: 4px;
+        border-radius: 3px;
+        height: 3px;
         overflow: hidden;
       }
       .prfg {
         height: 100%;
         background: var(--accent);
-        border-radius: 4px;
+        border-radius: 3px;
         transition: width 0.2s;
         width: 0%;
       }
       .prlbl {
-        font-size: 0.68rem;
+        font-size: 0.65rem;
         color: var(--sub);
-        margin-top: 0.3rem;
+        margin-top: 0.25rem;
       }
+
       .arow {
         display: flex;
-        gap: 0.75rem;
+        gap: 0.6rem;
       }
       .abtn {
         border: none;
         border-radius: var(--r);
-        padding: 0.6rem 1.4rem;
+        padding: 0.55rem 1.2rem;
         font-family: var(--mono);
-        font-size: 0.78rem;
+        font-size: 0.75rem;
         font-weight: 500;
         letter-spacing: 0.06em;
         text-transform: uppercase;
@@ -606,25 +671,20 @@
       .abtn.sec:hover {
         border-color: var(--accent2);
       }
-      .abtn:disabled {
-        opacity: 0.35;
-        cursor: not-allowed;
-      }
 
-      /* READ TAB */
-      .rtab {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
+      /* ── READ SCREEN ─────────────────────────────────────────────── */
+      #sc-read {
+        gap: 1.2rem;
+        padding-top: 1rem;
       }
       .rtoolbar {
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: 0.8rem;
         flex-wrap: wrap;
       }
       .slbl {
-        font-size: 0.7rem;
+        font-size: 0.68rem;
         color: var(--sub);
         letter-spacing: 0.08em;
         white-space: nowrap;
@@ -635,29 +695,29 @@
         background: var(--surface2);
         border-radius: 3px;
         outline: none;
-        width: 110px;
+        width: 100px;
       }
       input[type="range"].sl::-webkit-slider-thumb {
         -webkit-appearance: none;
-        width: 13px;
-        height: 13px;
+        width: 12px;
+        height: 12px;
         background: var(--accent);
         border-radius: 50%;
         cursor: pointer;
       }
       .snum {
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         color: var(--accent);
-        min-width: 70px;
+        min-width: 65px;
       }
       .rplaybtn {
         background: var(--accent);
         color: var(--bg);
         border: none;
         border-radius: var(--r);
-        padding: 0.4rem 1rem;
+        padding: 0.35rem 0.9rem;
         font-family: var(--mono);
-        font-size: 0.78rem;
+        font-size: 0.75rem;
         font-weight: 500;
         cursor: pointer;
         transition: all 0.12s;
@@ -670,55 +730,52 @@
         color: var(--sub);
         border: 1px solid var(--border);
         border-radius: var(--r);
-        padding: 0.4rem 1rem;
+        padding: 0.35rem 0.9rem;
         font-family: var(--mono);
-        font-size: 0.78rem;
+        font-size: 0.75rem;
         cursor: pointer;
         transition: all 0.12s;
       }
       .rstopbtn:hover {
         color: var(--text);
       }
+
       .ttsrow {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
+        gap: 0.65rem;
         flex-wrap: wrap;
-        padding: 0.75rem 1rem;
+        padding: 0.65rem 0.9rem;
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: var(--r);
       }
       .ttslbl {
-        font-size: 0.7rem;
+        font-size: 0.68rem;
         color: var(--sub);
-        letter-spacing: 0.08em;
       }
       select.ttsv {
         background: var(--surface2);
         border: 1px solid var(--border);
         color: var(--text);
         font-family: var(--mono);
-        font-size: 0.78rem;
+        font-size: 0.75rem;
         border-radius: 4px;
-        padding: 0.3rem 0.5rem;
+        padding: 0.25rem 0.45rem;
         outline: none;
         cursor: pointer;
-        max-width: 200px;
+        max-width: 190px;
       }
       .ttsbtn {
         background: var(--surface2);
         color: var(--sub);
         border: 1px solid var(--border);
         border-radius: var(--r);
-        padding: 0.35rem 0.8rem;
+        padding: 0.3rem 0.75rem;
         font-family: var(--mono);
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         cursor: pointer;
         transition: all 0.12s;
-        display: flex;
-        align-items: center;
-        gap: 0.35rem;
       }
       .ttsbtn:hover {
         color: var(--accent);
@@ -738,52 +795,52 @@
           opacity: 0.6;
         }
       }
-      .rcontent {
+
+      .rcont {
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: var(--r);
-        padding: 2rem 2.5rem;
+        padding: 1.8rem 2.2rem;
         max-height: 55vh;
         overflow-y: auto;
-        line-height: 1.9;
-        font-size: 0.95rem;
+        line-height: 1.85;
+        font-size: 0.92rem;
         color: var(--sub);
       }
-      .rcontent::-webkit-scrollbar {
+      .rcont::-webkit-scrollbar {
         width: 4px;
       }
-      .rcontent::-webkit-scrollbar-thumb {
+      .rcont::-webkit-scrollbar-thumb {
         background: var(--surface2);
         border-radius: 2px;
       }
       .rw {
         transition: color 0.1s;
-        cursor: default;
       }
       .rw.done {
         color: var(--text);
       }
       .rw.active {
         color: var(--accent);
-        background: rgba(0, 180, 216, 0.1);
+        background: rgba(136, 192, 208, 0.1);
         border-radius: 3px;
         padding: 0 1px;
       }
       .rpwrap {
         background: var(--surface2);
-        border-radius: 4px;
+        border-radius: 3px;
         height: 3px;
         overflow: hidden;
       }
       .rpbar {
         height: 100%;
         background: var(--accent);
-        border-radius: 4px;
+        border-radius: 3px;
         transition: width 0.3s;
         width: 0%;
       }
 
-      /* TOAST */
+      /* ── TOAST ───────────────────────────────────────────────────── */
       #toast {
         position: fixed;
         bottom: 2rem;
@@ -793,8 +850,8 @@
         border: 1px solid var(--border);
         color: var(--accent);
         border-radius: var(--r);
-        padding: 0.55rem 1.4rem;
-        font-size: 0.78rem;
+        padding: 0.5rem 1.3rem;
+        font-size: 0.75rem;
         letter-spacing: 0.06em;
         z-index: 999;
         opacity: 0;
@@ -808,6 +865,7 @@
     </style>
   </head>
   <body>
+    <!-- HEADER -->
     <div id="hdr">
       <div class="logo">
         <svg viewBox="0 0 24 24">
@@ -832,16 +890,29 @@
     </div>
 
     <div id="app">
-      <!-- ══ TYPE ══════════════════════════════════════════════════════ -->
+      <!-- ═══ TYPE ═══════════════════════════════════════════════════ -->
       <div id="sc-type" class="sc vis">
+        <!-- toolbar centered -->
         <div class="toolbar">
+          <!-- mode chips -->
           <button class="chip on" data-m="time" onclick="setMode('time', this)">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"
+              />
+            </svg>
             time
           </button>
           <button class="chip" data-m="words" onclick="setMode('words', this)">
+            <svg viewBox="0 0 24 24">
+              <path d="M2.5 4v3h5v12h3V7h5V4h-13zm19 5h-9v3h3v7h3v-7h3V9z" />
+            </svg>
             words
           </button>
           <button class="chip" data-m="quote" onclick="setMode('quote', this)">
+            <svg viewBox="0 0 24 24">
+              <path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z" />
+            </svg>
             quote
           </button>
           <button
@@ -849,9 +920,17 @@
             data-m="custom"
             onclick="setMode('custom', this)"
           >
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+              />
+            </svg>
             custom
           </button>
+
           <div class="sep"></div>
+
+          <!-- time opts -->
           <div id="topts">
             <button class="chip" data-v="15" onclick="setOpt(15, this)">
               15
@@ -866,6 +945,7 @@
               120
             </button>
           </div>
+          <!-- word opts -->
           <div id="wopts" style="display: none">
             <button class="chip" data-v="10" onclick="setOpt(10, this)">
               10
@@ -882,7 +962,8 @@
           </div>
         </div>
 
-        <div class="lstats">
+        <!-- live stats -->
+        <div class="lstats" id="lstats">
           <div class="ls">
             <div class="lv dim" id="s-wpm">—</div>
             <div class="ll">wpm</div>
@@ -897,6 +978,7 @@
           </div>
         </div>
 
+        <!-- typing area -->
         <div class="twrap" id="tw" onclick="fg()">
           <div class="words" id="words"></div>
           <input
@@ -911,211 +993,215 @@
           </div>
         </div>
 
-        <div class="brow">
+        <!-- buttons -->
+        <div class="btns">
           <button class="cbtn" onclick="doReset()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+            <svg viewBox="0 0 24 24">
               <path
-                d="M17.65 6.35A7.96 7.96 0 0012 4C7.58 4 4 7.58 4 12s3.58 8 8 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"
+                d="M17.65 6.35A7.96 7.96 0 0012 4C7.58 4 4.01 7.58 4.01 12S7.58 20 12 20c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"
               />
             </svg>
             restart
           </button>
           <button class="cbtn" onclick="doNew()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+            <svg viewBox="0 0 24 24">
               <path
-                d="M19 8l-4 4h3c0 3.31-2.69 6-6 6a5.87 5.87 0 01-2.8-.7l-1.46 1.46A7.93 7.93 0 0012 20c4.42 0 8-3.58 8-8h3l-4-4zM6 12c0-3.31 2.69-6 6-6 1.01 0 1.97.25 2.8.7l1.46-1.46A7.93 7.93 0 0012 4c-4.42 0-8 3.58-8 8H1l4 4 4-4H6z"
+                d="M19 8l-4 4h3c0 3.31-2.69 6-6 6-1.01 0-1.97-.25-2.8-.7l-1.46 1.46A7.93 7.93 0 0012 20c4.42 0 8-3.58 8-8h3l-4-4zM6 12c0-3.31 2.69-6 6-6 1.01 0 1.97.25 2.8.7l1.46-1.46A7.93 7.93 0 0012 4c-4.42 0-8 3.58-8 8H1l4 4 4-4H6z"
               />
             </svg>
             next
           </button>
         </div>
 
+        <div class="hint-line">
+          <kbd>tab</kbd> + <kbd>enter</kbd> — restart test
+        </div>
+
+        <!-- results -->
         <div id="results">
-          <div class="rmain">
-            <div class="rbig">
-              <div class="rbigv" id="r-wpm">0</div>
-              <div class="rbigl">wpm</div>
+          <div class="res-row">
+            <div class="res-main">
+              <div class="res-lbl">wpm</div>
+              <div class="res-wpm" id="r-wpm">0</div>
             </div>
-            <div class="rstats">
+            <div class="res-sub">
               <div class="rs">
-                <span class="rsv" id="r-acc">0%</span
-                ><span class="rsl">acc</span>
+                <span class="rs-v" id="r-acc">0%</span
+                ><span class="rs-l">acc</span>
               </div>
               <div class="rs">
-                <span class="rsv" id="r-raw">0</span
-                ><span class="rsl">raw</span>
+                <span class="rs-v" id="r-raw">0</span
+                ><span class="rs-l">raw</span>
               </div>
               <div class="rs">
-                <span class="rsv" id="r-chars">0/0</span
-                ><span class="rsl">chars</span>
+                <span class="rs-v" id="r-chars">0/0</span
+                ><span class="rs-l">chars</span>
               </div>
               <div class="rs">
-                <span class="rsv" id="r-time">0s</span
-                ><span class="rsl">time</span>
+                <span class="rs-v" id="r-time">0s</span
+                ><span class="rs-l">time</span>
               </div>
             </div>
           </div>
-          <button class="retrybtn" onclick="doReset()">
-            tab ↵ — try again
+          <button class="retry-btn" onclick="doReset()">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+              <path
+                d="M17.65 6.35A7.96 7.96 0 0012 4C7.58 4 4.01 7.58 4.01 12S7.58 20 12 20c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"
+              />
+            </svg>
+            try again
           </button>
         </div>
       </div>
 
-      <!-- ══ READ ══════════════════════════════════════════════════════ -->
+      <!-- ═══ READ ════════════════════════════════════════════════════ -->
       <div id="sc-read" class="sc">
-        <div class="rtab">
-          <div class="rtoolbar">
-            <span class="slbl">speed</span>
-            <input
-              type="range"
-              class="sl"
-              id="rspd"
-              min="60"
-              max="600"
-              value="200"
-              oninput="updRSpd()"
-            />
-            <span class="snum" id="rspd-v">200 wpm</span>
-            <div class="sep"></div>
-            <button class="rplaybtn" id="playbtn" onclick="togPlay()">
-              ▶ play
-            </button>
-            <button class="rstopbtn" onclick="stopPlay()">■ stop</button>
-            <button
-              class="chip"
-              onclick="showSc('text', document.querySelector('[data-sc=text]'))"
-            >
-              + text
-            </button>
-          </div>
-
-          <div class="ttsrow">
-            <span class="ttslbl">🔊 speech</span>
-            <select class="ttsv" id="vsel"></select>
-            <span class="slbl">rate</span>
-            <input
-              type="range"
-              class="sl"
-              id="ttsrate"
-              min="0.5"
-              max="2"
-              step="0.1"
-              value="1"
-              oninput="
-                document.getElementById('ttsrv').textContent = this.value + '×'
-              "
-            />
-            <span class="snum" id="ttsrv">1×</span>
-            <button class="ttsbtn" id="ttsbtn" onclick="togTTS()">
-              ▶ read aloud
-            </button>
-            <button class="ttsbtn" onclick="stopTTS()">■ stop</button>
-          </div>
-
-          <div class="rcontent" id="rcont">
-            <span style="color: var(--sub2)"
-              >Load text from the
-              <strong style="color: var(--sub)">text</strong> tab first.</span
-            >
-          </div>
-          <div class="rpwrap"><div class="rpbar" id="rpbar"></div></div>
+        <div class="rtoolbar">
+          <span class="slbl">speed</span>
+          <input
+            type="range"
+            class="sl"
+            id="rspd"
+            min="60"
+            max="600"
+            value="200"
+            oninput="updRS()"
+          />
+          <span class="snum" id="rspd-v">200 wpm</span>
+          <div class="sep"></div>
+          <button class="rplaybtn" id="playbtn" onclick="togPlay()">
+            ▶ play
+          </button>
+          <button class="rstopbtn" onclick="stopPlay()">■ stop</button>
+          <button
+            class="chip"
+            onclick="showSc('text', document.querySelector('[data-sc=text]'))"
+          >
+            + text
+          </button>
         </div>
+
+        <div class="ttsrow">
+          <span class="ttslbl">🔊 speech</span>
+          <select class="ttsv" id="vsel"></select>
+          <span class="slbl">rate</span>
+          <input
+            type="range"
+            class="sl"
+            id="ttsrate"
+            min="0.5"
+            max="2"
+            step="0.1"
+            value="1"
+            oninput="
+              document.getElementById('ttsrv').textContent = this.value + '×'
+            "
+          />
+          <span class="snum" id="ttsrv">1×</span>
+          <button class="ttsbtn" id="ttsbtn" onclick="togTTS()">
+            ▶ read aloud
+          </button>
+          <button class="ttsbtn" onclick="stopTTS()">■ stop</button>
+        </div>
+
+        <div class="rcont" id="rcont">
+          <span style="color: var(--sub2)"
+            >Load text from the
+            <strong style="color: var(--sub)">text</strong> tab first.</span
+          >
+        </div>
+        <div class="rpwrap"><div class="rpbar" id="rpbar"></div></div>
       </div>
 
-      <!-- ══ TEXT ══════════════════════════════════════════════════════ -->
+      <!-- ═══ TEXT ════════════════════════════════════════════════════ -->
       <div id="sc-text" class="sc">
-        <div class="ttab">
-          <div>
-            <div class="shd">sample books</div>
-            <div class="bgrid" id="bgrid"></div>
+        <div>
+          <div class="section-hd">sample books</div>
+          <div class="bgrid" id="bgrid"></div>
+        </div>
+        <div>
+          <div class="section-hd">custom text</div>
+          <div class="tbox">
+            <div class="tbxhd">
+              <span>paste any text</span>
+              <span id="cc">0 chars · 0 words</span>
+            </div>
+            <textarea
+              id="cta"
+              placeholder="Paste a chapter, article, or any text here..."
+              oninput="onTA()"
+            ></textarea>
           </div>
-          <div>
-            <div class="shd">custom text</div>
-            <div class="tbox">
-              <div class="tbxhd">
-                <span>paste any text</span>
-                <span id="cc">0 chars · 0 words</span>
-              </div>
-              <textarea
-                id="cta"
-                placeholder="Paste any chapter, article, or book text here..."
-                oninput="onTA()"
-              ></textarea>
+        </div>
+        <div>
+          <div class="section-hd">upload pdf</div>
+          <div class="pzone" id="pzone">
+            <input
+              type="file"
+              id="pfile"
+              accept=".pdf"
+              onchange="loadPDF(this.files[0])"
+            />
+            <div class="pico">📄</div>
+            <div class="pztxt">
+              Drop a PDF here or <strong>click to browse</strong>
+            </div>
+            <div
+              style="
+                font-size: 0.68rem;
+                color: var(--sub2);
+                margin-top: 0.25rem;
+              "
+            >
+              All pages extracted — choose which to use
             </div>
           </div>
-          <div>
-            <div class="shd">upload pdf</div>
-            <div class="pzone" id="pzone">
-              <input
-                type="file"
-                id="pfile"
-                accept=".pdf"
-                onchange="loadPDF(this.files[0])"
-              />
-              <div class="pico">📄</div>
-              <div class="pztxt">
-                Drop a PDF here or <strong>click to browse</strong>
-              </div>
-              <div
-                style="
-                  font-size: 0.7rem;
-                  color: var(--sub2);
-                  margin-top: 0.3rem;
-                "
-              >
-                All pages extracted — select which to use
-              </div>
+          <div id="pstat">
+            <div class="pnm" id="pnm">—</div>
+            <div class="pmt" id="pmt">—</div>
+            <div class="prwrap" id="prwrap">
+              <div class="prbg"><div class="prfg" id="pbar"></div></div>
+              <div class="prlbl" id="prlbl">Extracting...</div>
             </div>
-            <div id="pstat">
-              <div class="prow">
-                <div>
-                  <div class="pnm" id="pnm">—</div>
-                  <div class="pmt" id="pmt">—</div>
-                </div>
-              </div>
-              <div class="prwrap" id="prwrap">
-                <div class="prbg"><div class="prfg" id="pbar"></div></div>
-                <div class="prlbl" id="prlbl">Extracting pages...</div>
-              </div>
-              <div class="pchips" id="pchips"></div>
-            </div>
+            <div class="pchips" id="pchips"></div>
           </div>
-          <div class="arow">
-            <button class="abtn pri" onclick="applyText('type')">
-              use for typing →
-            </button>
-            <button class="abtn sec" onclick="applyText('read')">
-              use for reading →
-            </button>
-          </div>
+        </div>
+        <div class="arow">
+          <button class="abtn pri" onclick="applyText('type')">
+            use for typing →
+          </button>
+          <button class="abtn sec" onclick="applyText('read')">
+            use for reading →
+          </button>
         </div>
       </div>
     </div>
+    <!-- /app -->
     <div id="toast"></div>
 
     <script>
-      // ── PDF.js ──────────────────────────────────────────────────────
+      // PDF.js
       if (window.pdfjsLib)
         pdfjsLib.GlobalWorkerOptions.workerSrc =
           "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
-      // ── WORD BANK ───────────────────────────────────────────────────
+      // ── WORD BANK (400 common English words) ────────────────────────
       const WB =
-        "the be to of and a in that have it for not on with he as you do at this but his by from they we say her she or an will my one all would there their what so up out if about who get which go me when make can like time no just him know take people into year your good some could them see other than then now look only come its over think also back after use two how our work first well way even new want because any these give day most us great between need large often hand high place hold free real life few north open seem together next white children begin got walk example ease paper group always music those both mark book letter until mile river car feet care second enough plain girl usual young ready above ever red list though feel talk bird soon body dog family direct pose leave real world still every found still may long down day get come made may part".split(
-          " ",
-        );
+        "the be to of and a in that have it for not on with he as you do at this but his by from they we say her she or an will my one all would there their what so up out if about who get which go me when make can like time no just him know take people into year your good some could them see other than then now look only come its over think also back after use two how our work first well way even new want because any these give day most us great between need large often hand high place hold free real life few north open seem together next white children begin got walk example ease paper group always music those both mark book letter until mile river car feet care second enough plain girl usual young ready above ever red list though feel talk bird soon body dog family direct pose leave real world still every found may long down get come made part play form put end does large big give point men too such well must ask went light show every good give our under name very through just form much great think say help low line turn cause same mean differ move right boy old too does tell following came want show also large often hand play spell air away animal house point page letter mother answer found study still learn should America world high every near add food between own below country plant last school father keep tree never start city earth eyes light thought head under story saw left don't few while along might close something seem next hard open example begin life always those both paper together got walk ease group often music those both"
+          .split(" ")
+          .filter(Boolean);
 
       const QUOTES = [
-        "It was a bright cold day in April, and the clocks were striking thirteen. Winston Smith, his chin nuzzled into his breast in an effort to escape the vile wind, slipped quickly through the glass doors of Victory Mansions.",
+        "It was a bright cold day in April, and the clocks were striking thirteen. Winston Smith, his chin nuzzled into his breast in an effort to escape the vile wind, slipped quickly through the glass doors of Victory Mansions, though not quickly enough to prevent a swirl of gritty dust from entering along with him.",
         "Call me Ishmael. Some years ago, never mind how long precisely, having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world.",
         "It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife. However little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families.",
-        "It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness.",
+        "It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair.",
         "In my younger and more vulnerable years my father gave me some advice that I have been turning over in my mind ever since. Whenever you feel like criticizing anyone, he told me, just remember that all the people in this world haven't had the advantages that you've had.",
-        "Many years later, as he faced the firing squad, Colonel Aureliano Buendía was to remember that distant afternoon when his father took him to discover ice. At that time Macondo was a village of twenty adobe houses.",
-        "Happy families are all alike; every unhappy family is unhappy in its own way. Everything was in confusion in the Oblonskys' house. The wife had discovered that the husband was carrying on an intrigue with a French girl.",
-        "All animals are equal, but some animals are more equal than others. It was a maxim that had been carved on the barn wall and was never disputed.",
-        "It was a pleasure to burn. It was a special pleasure to see things eaten, to see things blackened and changed. With the brass nozzle in his fists, with this great python spitting its venomous kerosene upon the world.",
-        "The sky above the port was the color of television, tuned to a dead channel. All this happened, more or less. The war parts, anyway, are pretty much true.",
+        "Many years later, as he faced the firing squad, Colonel Aureliano Buendía was to remember that distant afternoon when his father took him to discover ice. At that time Macondo was a village of twenty adobe houses, built on the bank of a river of clear water.",
+        "Happy families are all alike; every unhappy family is unhappy in its own way. Everything was in confusion in the Oblonskys' house. The wife had discovered that the husband was carrying on an intrigue with a French girl who had been a governess in their family.",
+        "All animals are equal, but some animals are more equal than others. The pigs did not actually work, but directed and supervised the others. With their superior knowledge it was natural that they should assume the leadership.",
+        "It was a pleasure to burn. It was a special pleasure to see things eaten, to see things blackened and changed. With the brass nozzle in his fists, with this great python spitting its venomous kerosene upon the world, the blood pounded in his head.",
+        "The sky above the port was the color of television, tuned to a dead channel. All this happened, more or less. The war parts, anyway, are pretty much true. One guy I knew really was shot in Dresden for taking a teapot that wasn't his.",
       ];
 
       const BOOKS = [
@@ -1131,7 +1217,7 @@
         { t: "Neuromancer", a: "William Gibson", i: 9 },
       ];
 
-      // ── STATE ───────────────────────────────────────────────────────
+      // ── STATE ────────────────────────────────────────────────────────
       const S = {
         mode: "time",
         opt: 30,
@@ -1147,7 +1233,7 @@
         custom: "",
       };
 
-      // ── SCREEN ──────────────────────────────────────────────────────
+      // ── SCREENS ──────────────────────────────────────────────────────
       function showSc(name, btn) {
         document
           .querySelectorAll(".sc")
@@ -1159,7 +1245,7 @@
         if (btn) btn.classList.add("on");
       }
 
-      // ── MODE ────────────────────────────────────────────────────────
+      // ── MODE / OPT ───────────────────────────────────────────────────
       function setMode(m, btn) {
         S.mode = m;
         document
@@ -1172,19 +1258,19 @@
           to.style.display = "";
           wo.style.display = "none";
           S.opt = 30;
-          setOptChip(to, "30");
+          chipOn(to, "30");
         } else if (m === "words") {
           to.style.display = "none";
           wo.style.display = "";
           S.opt = 25;
-          setOptChip(wo, "25");
+          chipOn(wo, "25");
         } else {
           to.style.display = "none";
           wo.style.display = "none";
         }
         doReset();
       }
-      function setOptChip(cont, val) {
+      function chipOn(cont, val) {
         cont
           .querySelectorAll(".chip")
           .forEach((c) => c.classList.toggle("on", c.dataset.v === val));
@@ -1198,14 +1284,13 @@
         doReset();
       }
 
-      // ── GENERATE TEXT ────────────────────────────────────────────────
+      // ── TEXT GENERATION ──────────────────────────────────────────────
       function genText() {
         if (S.mode === "custom") return S.custom || genW(40);
         if (S.mode === "quote")
           return QUOTES[Math.floor(Math.random() * QUOTES.length)];
         if (S.mode === "words") return genW(S.opt);
-        // time: generate words for ~2× duration at ~60wpm
-        return genW(Math.max(60, S.opt * 2));
+        return genW(Math.max(80, S.opt * 2)); // time mode: ample words
       }
       function genW(n) {
         const a = [];
@@ -1214,7 +1299,7 @@
         return a.join(" ");
       }
 
-      // ── INIT TYPING ──────────────────────────────────────────────────
+      // ── INIT ─────────────────────────────────────────────────────────
       function initTyping() {
         S.text = genText();
         S.typed = "";
@@ -1227,18 +1312,18 @@
         clearInterval(S.tick);
         document.getElementById("results").classList.remove("show");
         document.getElementById("words").style.visibility = "visible";
-        document.querySelector(".lstats").style.visibility = "visible";
+        document.getElementById("lstats").style.visibility = "visible";
         dimStats();
         render();
         document.getElementById("ghost").value = "";
       }
 
       function dimStats() {
-        const sv = document.getElementById("s-wpm"),
+        const sw = document.getElementById("s-wpm"),
           sa = document.getElementById("s-acc"),
           st = document.getElementById("s-time");
-        sv.textContent = "—";
-        sv.classList.add("dim");
+        sw.textContent = "—";
+        sw.classList.add("dim");
         sa.textContent = "—";
         sa.classList.add("dim");
         st.classList.add("dim");
@@ -1256,55 +1341,66 @@
       }
 
       // ── RENDER ───────────────────────────────────────────────────────
-      const EC = { "<": "&lt;", ">": "&gt;", "&": "&amp;", " ": "&nbsp;" };
-      const ec = (c) => EC[c] || c;
-
+      // Matches MonkeyType's character-level rendering exactly
       function render() {
         const el = document.getElementById("words");
         const { text, typed } = S;
         const wds = text.split(" ");
         let gi = 0,
           html = "";
+
         for (let wi = 0; wi < wds.length; wi++) {
           const wd = wds[wi];
           let wh = "",
-            herr = false;
+            hasErr = false;
           for (let ci = 0; ci < wd.length; ci++) {
             let cls = "ch";
             if (gi < typed.length) {
-              cls += typed[gi] === text[gi] ? " correct" : " wrong";
-              if (typed[gi] !== text[gi]) herr = true;
+              if (typed[gi] === text[gi]) cls += " correct";
+              else {
+                cls += " wrong";
+                hasErr = true;
+              }
             } else if (gi === typed.length) cls += " cursor";
-            wh += `<span class="${cls}">${ec(wd[ci])}</span>`;
+            wh += `<span class="${cls}">${xc(text[gi])}</span>`;
             gi++;
           }
-          // space
+          // the space character
           if (gi < text.length) {
             let cls = "ch";
-            if (gi < typed.length) {
+            if (gi < typed.length)
               cls += typed[gi] === text[gi] ? " correct" : " wrong";
-            } else if (gi === typed.length) cls += " cursor typed";
-            wh += `<span class="${cls}">&nbsp;</span>`;
+            else if (gi === typed.length) cls += " cursor after";
+            wh += `<span class="${cls} sp-ch">&nbsp;</span>`;
           }
           gi++;
-          html += `<span class="word${herr ? " ewrd" : ""}">${wh}</span> `;
+          html += `<span class="word${hasErr ? " ewrd" : ""}">${wh}</span>`;
         }
+        // extra chars
         if (typed.length > text.length) {
           for (let i = text.length; i < typed.length; i++)
-            html += `<span class="ch extra">${ec(typed[i])}</span>`;
+            html += `<span class="ch extra">${xc(typed[i])}</span>`;
         }
         el.innerHTML = html;
         scrollLine();
+      }
+
+      function xc(c) {
+        if (!c) return "";
+        if (c === "<") return "&lt;";
+        if (c === ">") return "&gt;";
+        if (c === "&") return "&amp;";
+        return c;
       }
 
       function scrollLine() {
         const el = document.getElementById("words");
         const cur = el.querySelector(".cursor");
         if (!cur) return;
-        const et = el.getBoundingClientRect().top,
-          ct = cur.getBoundingClientRect().top;
-        const lh = parseFloat(getComputedStyle(el).lineHeight) || 44;
-        if (ct - et > lh * 1.8) el.scrollTop += ct - et - lh;
+        const et = el.getBoundingClientRect().top;
+        const ct = cur.getBoundingClientRect().top;
+        const lh = parseFloat(getComputedStyle(el).lineHeight) || 38;
+        if (ct - et > lh * 1.9) el.scrollTop += ct - et - lh;
       }
 
       // ── GHOST INPUT ──────────────────────────────────────────────────
@@ -1367,7 +1463,7 @@
         if (ev.key.length === 1) fg();
       });
 
-      // ── TICK ────────────────────────────────────────────────────────
+      // ── TICK ─────────────────────────────────────────────────────────
       function startTick() {
         S.tick = setInterval(() => {
           S.elapsed = (Date.now() - S.startMs) / 1000;
@@ -1400,7 +1496,6 @@
           st.classList.remove("dim");
         }
       }
-
       function cntCor() {
         let n = 0;
         for (let i = 0; i < Math.min(S.typed.length, S.text.length); i++)
@@ -1428,7 +1523,7 @@
         document.getElementById("r-time").textContent =
           Math.round(S.elapsed) + "s";
         document.getElementById("words").style.visibility = "hidden";
-        document.querySelector(".lstats").style.visibility = "hidden";
+        document.getElementById("lstats").style.visibility = "hidden";
         document.getElementById("results").classList.add("show");
       }
 
@@ -1451,19 +1546,19 @@
         S.errors = 0;
         document.getElementById("results").classList.remove("show");
         document.getElementById("words").style.visibility = "visible";
-        document.querySelector(".lstats").style.visibility = "visible";
+        document.getElementById("lstats").style.visibility = "visible";
         dimStats();
         render();
         setTimeout(fg, 60);
       }
 
-      // ── BOOKS ───────────────────────────────────────────────────────
+      // ── BOOKS ─────────────────────────────────────────────────────────
       function buildBooks() {
         const g = document.getElementById("bgrid");
         BOOKS.forEach((b) => {
           const d = document.createElement("div");
           d.className = "bcard";
-          d.innerHTML = `<div class="bct">${b.t}</div><div class="bca">${b.a}</div>`;
+          d.innerHTML = `<div class="bt">${b.t}</div><div class="ba">${b.a}</div>`;
           d.onclick = () => {
             document
               .querySelectorAll(".bcard")
@@ -1510,7 +1605,7 @@
           S.errors = 0;
           document.getElementById("results").classList.remove("show");
           document.getElementById("words").style.visibility = "visible";
-          document.querySelector(".lstats").style.visibility = "visible";
+          document.getElementById("lstats").style.visibility = "visible";
           dimStats();
           render();
           showSc("type", document.querySelector("[data-sc=type]"));
@@ -1523,7 +1618,7 @@
         }
       }
 
-      // ── PDF ─────────────────────────────────────────────────────────
+      // ── PDF ───────────────────────────────────────────────────────────
       let pdfPages = [],
         selPages = new Set();
 
@@ -1541,14 +1636,11 @@
         document.getElementById("pbar").style.width = "0%";
         document.getElementById("prlbl").textContent = "Starting...";
         document.getElementById("prwrap").style.display = "block";
-
         try {
           const buf = await file.arrayBuffer();
           const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
           const n = pdf.numPages;
           document.getElementById("pmt").textContent = n + " pages";
-
-          // Extract each page asynchronously, yielding control between pages
           for (let i = 1; i <= n; i++) {
             try {
               const pg = await pdf.getPage(i);
@@ -1566,13 +1658,10 @@
               Math.round((i / n) * 100) + "%";
             document.getElementById("prlbl").textContent =
               "Page " + i + " of " + n;
-            // Yield to browser every page to avoid UI freeze
-            await new Promise((r) => setTimeout(r, 0));
+            await new Promise((r) => setTimeout(r, 0)); // yield so UI stays live
           }
-
           document.getElementById("prwrap").style.display = "none";
           buildPgChips(n);
-          // select all by default
           for (let i = 0; i < n; i++) selPages.add(i);
           document
             .querySelectorAll(".pgchip:not(.all-chip)")
@@ -1592,20 +1681,17 @@
         all.className = "pgchip all-chip sel";
         all.id = "chall";
         all.textContent = "All";
-        all.onclick = () => {
-          selAll(n);
-        };
+        all.onclick = () => selAll(n);
         cont.appendChild(all);
         for (let i = 1; i <= n; i++) {
           const c = document.createElement("button");
           c.className = "pgchip";
           c.textContent = i;
           c.dataset.pi = i - 1;
-          c.onclick = () => togPg(i - 1, c, n);
+          c.onclick = () => togPg(i - 1, c);
           cont.appendChild(c);
         }
       }
-
       function selAll(n) {
         selPages = new Set();
         for (let i = 0; i < n; i++) selPages.add(i);
@@ -1615,7 +1701,7 @@
         document.getElementById("chall").classList.add("sel");
         buildCombo();
       }
-      function togPg(idx, chip, n) {
+      function togPg(idx, chip) {
         document.getElementById("chall").classList.remove("sel");
         if (selPages.has(idx)) {
           selPages.delete(idx);
@@ -1635,7 +1721,6 @@
         onTA();
       }
 
-      // drag-drop
       const pz = document.getElementById("pzone");
       pz.addEventListener("dragover", (e) => {
         e.preventDefault();
@@ -1649,7 +1734,7 @@
         if (f && f.type === "application/pdf") loadPDF(f);
       });
 
-      // ── READ MODE ────────────────────────────────────────────────────
+      // ── READ ──────────────────────────────────────────────────────────
       let rWords = [],
         rIdx = 0,
         rInt = null,
@@ -1663,7 +1748,6 @@
         renderRead();
         document.getElementById("rpbar").style.width = "0%";
       }
-
       function renderRead() {
         const el = document.getElementById("rcont");
         if (!rWords.length) {
@@ -1672,16 +1756,15 @@
           return;
         }
         el.innerHTML = rWords
-          .map((w, i) => `<span class="rw" id="rw${i}">${esc2(w)} </span>`)
+          .map((w, i) => `<span class="rw" id="rw${i}">${esc(w)} </span>`)
           .join("");
       }
-      function esc2(s) {
+      function esc(s) {
         return s
           .replace(/&/g, "&amp;")
           .replace(/</g, "&lt;")
           .replace(/>/g, "&gt;");
       }
-
       function togPlay() {
         if (rPlay) pausePlay();
         else startPlay();
@@ -1693,8 +1776,7 @@
         }
         rPlay = true;
         document.getElementById("playbtn").textContent = "⏸ pause";
-        const ms = (60 / rSpd) * 1000;
-        rInt = setInterval(stepRead, ms);
+        rInt = setInterval(stepRead, (60 / rSpd) * 1000);
       }
       function pausePlay() {
         rPlay = false;
@@ -1712,21 +1794,21 @@
           stopPlay();
           return;
         }
-        const prev = document.getElementById("rw" + (rIdx - 1));
-        if (prev) {
-          prev.classList.remove("active");
-          prev.classList.add("done");
+        const p = document.getElementById("rw" + (rIdx - 1));
+        if (p) {
+          p.classList.remove("active");
+          p.classList.add("done");
         }
-        const cur = document.getElementById("rw" + rIdx);
-        if (cur) {
-          cur.classList.add("active");
-          cur.scrollIntoView({ behavior: "smooth", block: "center" });
+        const c = document.getElementById("rw" + rIdx);
+        if (c) {
+          c.classList.add("active");
+          c.scrollIntoView({ behavior: "smooth", block: "center" });
         }
         rIdx++;
         document.getElementById("rpbar").style.width =
           (rIdx / rWords.length) * 100 + "%";
       }
-      function updRSpd() {
+      function updRS() {
         rSpd = parseInt(document.getElementById("rspd").value);
         document.getElementById("rspd-v").textContent = rSpd + " wpm";
         if (rPlay) {
@@ -1735,19 +1817,16 @@
         }
       }
 
-      // ── TTS ──────────────────────────────────────────────────────────
+      // ── TTS ───────────────────────────────────────────────────────────
       let ttsOn = false,
         ttsUtt = null;
-
       function loadVoices() {
-        const sel = document.getElementById("vsel");
-        const voices = window.speechSynthesis
-          ? speechSynthesis.getVoices()
-          : [];
+        const sel = document.getElementById("vsel"),
+          voices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
         if (!voices.length) return;
         sel.innerHTML = "";
-        const en = voices.filter((v) => v.lang.startsWith("en"));
-        const rest = voices.filter((v) => !v.lang.startsWith("en"));
+        const en = voices.filter((v) => v.lang.startsWith("en")),
+          rest = voices.filter((v) => !v.lang.startsWith("en"));
         [...en, ...rest].forEach((v) => {
           const o = document.createElement("option");
           o.value = v.name;
@@ -1759,18 +1838,16 @@
         speechSynthesis.onvoiceschanged = loadVoices;
         setTimeout(loadVoices, 300);
       }
-
       function togTTS() {
         if (ttsOn) stopTTS();
         else startTTS();
       }
-
       function startTTS() {
         if (!window.speechSynthesis) {
-          toast("Speech not supported in this browser");
+          toast("Speech not supported");
           return;
         }
-        const txt = rWords.length ? rWords.join(" ") : "";
+        const txt = rWords.join(" ");
         if (!txt) {
           toast("Load text first");
           return;
@@ -1794,8 +1871,10 @@
         ttsUtt.onend = ttsUtt.onerror = cleanTTS;
         ttsUtt.onboundary = (ev) => {
           if (ev.name !== "word") return;
-          const sub = txt.slice(0, ev.charIndex);
-          const wi = sub.split(/\s+/).filter(Boolean).length;
+          const wi = txt
+            .slice(0, ev.charIndex)
+            .split(/\s+/)
+            .filter(Boolean).length;
           highlightTTS(wi);
         };
         speechSynthesis.speak(ttsUtt);
@@ -1805,10 +1884,10 @@
           el.classList.remove("active");
           if (i < wi) el.classList.add("done");
         });
-        const cur = document.getElementById("rw" + wi);
-        if (cur) {
-          cur.classList.add("active");
-          cur.scrollIntoView({ behavior: "smooth", block: "center" });
+        const c = document.getElementById("rw" + wi);
+        if (c) {
+          c.classList.add("active");
+          c.scrollIntoView({ behavior: "smooth", block: "center" });
         }
       }
       function stopTTS() {
@@ -1832,7 +1911,7 @@
         toastTm = setTimeout(() => el.classList.remove("show"), 2500);
       }
 
-      // ── INIT ──────────────────────────────────────────────────────────
+      // ── BOOT ──────────────────────────────────────────────────────────
       buildBooks();
       initTyping();
     </script>
